@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saturn Games Portal</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="/env.js" defer></script>
+    <script type="module" src="/app.js" defer></script>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="container hero__content">
+        <div>
+          <h1>Saturn Games</h1>
+          <p>Descubra, compre e jogue os melhores títulos com acesso renovado automaticamente a cada compra.</p>
+          <a class="button button--primary" href="#catalogo">Ver catálogo de jogos</a>
+        </div>
+        <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80" alt="Pessoa jogando videogame" />
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="card" id="auth">
+        <h2>Acesse sua conta</h2>
+        <div class="auth__grid">
+          <form id="signup-form" class="card__section">
+            <h3>Criar conta</h3>
+            <label for="signup-email">Email</label>
+            <input id="signup-email" name="email" type="email" required />
+            <label for="signup-password">Senha</label>
+            <input id="signup-password" name="password" type="password" minlength="6" required />
+            <button class="button button--primary" type="submit">Cadastrar</button>
+            <p class="helper">Receba um email de confirmação enviado pelo Supabase.</p>
+          </form>
+
+          <form id="login-form" class="card__section">
+            <h3>Entrar</h3>
+            <label for="login-email">Email</label>
+            <input id="login-email" name="email" type="email" required />
+            <label for="login-password">Senha</label>
+            <input id="login-password" name="password" type="password" required />
+            <button class="button" type="submit">Entrar</button>
+            <p class="helper">Ou use o login mágico enviando um link para seu email.</p>
+            <button class="button button--ghost" id="magic-link" type="button">Enviar magic link</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="card" id="profile" hidden>
+        <div class="card__header">
+          <h2>Olá, <span id="profile-email"></span></h2>
+          <button class="button button--ghost" id="signout">Sair</button>
+        </div>
+        <div class="status" id="session-status"></div>
+      </section>
+
+      <section class="card" id="catalogo">
+        <div class="card__header">
+          <h2>Catálogo de jogos</h2>
+          <div class="status" id="games-status"></div>
+        </div>
+        <div id="games-grid" class="grid"></div>
+      </section>
+
+      <section class="card" id="licenses" hidden>
+        <div class="card__header">
+          <h2>Seus jogos</h2>
+          <div class="status" id="licenses-status"></div>
+        </div>
+        <ul id="licenses-list" class="list"></ul>
+      </section>
+
+      <section class="card" id="payments" hidden>
+        <div class="card__header">
+          <h2>Histórico de pagamentos</h2>
+          <div class="status" id="payments-status"></div>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Jogo</th>
+              <th>Valor</th>
+              <th>Status</th>
+              <th>Data</th>
+            </tr>
+          </thead>
+          <tbody id="payments-body"></tbody>
+        </table>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>&copy; <span id="year"></span> Saturn Games. Todos os direitos reservados.</p>
+      </div>
+    </footer>
+
+    <div id="global-status" class="global-status" role="alert" hidden></div>
+  </body>
+</html>
