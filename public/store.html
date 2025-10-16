@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loja Saturn Games</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="/env.js" defer></script>
+    <script type="module" src="/app.js" defer></script>
+  </head>
+  <body data-page="store">
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="sidebar__logo">
+          <span class="sidebar__logo-mark">🪐</span>
+          <span class="sidebar__logo-text">Saturn Games</span>
+        </div>
+        <nav class="sidebar__nav" aria-label="Principal">
+          <a class="nav-item" data-page-link="home" href="/">
+            <span class="nav-icon">🏠</span>
+            <span>Visão geral</span>
+          </a>
+          <a class="nav-item" data-page-link="store" href="/store.html">
+            <span class="nav-icon">🛒</span>
+            <span>Loja</span>
+          </a>
+          <a class="nav-item" data-page-link="library" href="/library.html">
+            <span class="nav-icon">🎮</span>
+            <span>Biblioteca</span>
+          </a>
+          <a class="nav-item" data-page-link="payments" href="/payments.html">
+            <span class="nav-icon">💳</span>
+            <span>Pagamentos</span>
+          </a>
+          <a class="nav-item" data-page-link="engine" href="/engine.html">
+            <span class="nav-icon">📡</span>
+            <span>Motor de escuta</span>
+          </a>
+        </nav>
+        <div class="sidebar__cta">
+          <h2>Suporte premium</h2>
+          <p>
+            Atendimento especializado 24/7 para creators que precisam de respostas rápidas antes de
+            grandes transmissões.
+          </p>
+          <button class="button button--ghost" type="button" data-open-account>Falar com o time</button>
+        </div>
+        <div class="sidebar__footer">
+          <p>&copy; <span data-year></span> Saturn Games</p>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="topbar__title">
+            <p class="topbar__subtitle">Catálogo oficial</p>
+            <h1>Loja de jogos interativos</h1>
+          </div>
+          <div class="topbar__actions">
+            <button class="button button--ghost" id="signout" type="button" hidden>Sair</button>
+            <button
+              class="avatar-button"
+              id="account-toggle"
+              type="button"
+              aria-haspopup="dialog"
+              aria-expanded="false"
+            >
+              <span class="avatar-button__icon" data-avatar-initial>👤</span>
+            </button>
+          </div>
+        </header>
+
+        <section
+          class="hero hero--store hero--cover"
+          style="--hero-image: url('https://images.unsplash.com/photo-1605902711834-8b11c3e3ef41?auto=format&fit=crop&w=1600&q=80');"
+        >
+          <div class="hero__badge">Loja oficial para streamers TikTok</div>
+          <div class="hero__content">
+            <div class="hero__text">
+              <h2>Escolha o título ideal para engajar sua live</h2>
+              <p>
+                Explore catálogos interativos, coleções temáticas e bundles com curadoria do nosso time
+                de sucesso para criadores que precisam de jogos responsivos ao chat em tempo real.
+              </p>
+              <div class="hero__cta">
+                <a class="button button--primary" href="#store-catalog">Explorar catálogo</a>
+                <button class="button button--ghost" type="button" data-open-account>Entrar na conta</button>
+              </div>
+              <p class="hero__note">Checkout com Stripe + licenças renovadas automaticamente a cada compra.</p>
+            </div>
+            <div class="hero__metrics">
+              <div class="hero-metric">
+                <strong id="store-total-games">0</strong>
+                <span>Títulos ativos</span>
+              </div>
+              <div class="hero-metric">
+                <strong>99.9%</strong>
+                <span>Uptime do motor de escuta</span>
+              </div>
+              <div class="hero-metric">
+                <strong>24/7</strong>
+                <span>Suporte especializado</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel panel--raised store-feature">
+          <div class="store-feature__media" role="presentation"></div>
+          <div class="store-feature__content">
+            <p class="store-feature__eyebrow">Coleção destaque da semana</p>
+            <h2>Lives com narrativa dinâmica e reações instantâneas</h2>
+            <p>
+              Misture storytelling com comandos do chat para desbloquear cenas especiais. A coleção Dynamic
+              Stories traz triggers narrativos que acompanham a vibração da audiência e permite controlar a
+              história ao vivo.
+            </p>
+            <ul class="store-feature__bullets">
+              <li>Integrações prontas com TikTok Live Studio</li>
+              <li>Eventos sonoros, visuais e de votação sincronizados</li>
+              <li>Analytics de engajamento enviados em tempo real</li>
+            </ul>
+            <a class="button button--primary" href="#store-catalog">Ver jogos da coleção</a>
+          </div>
+        </section>
+
+        <section class="panel" id="store-catalog">
+          <header class="panel__header">
+            <div>
+              <h2>Catálogo interativo</h2>
+              <p class="panel__subtitle">
+                Cada compra adiciona +1 mês de licença. Veja trailers, imagens e detalhes antes de finalizar.
+              </p>
+            </div>
+            <div class="status" id="games-status" aria-live="polite"></div>
+          </header>
+          <div id="games-grid" class="store-grid" aria-live="polite"></div>
+        </section>
+
+        <section class="panel panel--transparent store-bundle">
+          <div class="store-bundle__card">
+            <div class="store-bundle__media" role="presentation"></div>
+            <div class="store-bundle__body">
+              <p class="store-bundle__eyebrow">Pacote pro creators</p>
+              <h2>Assine o Combo Live Booster</h2>
+              <p>
+                Combine três jogos interativos com dashboards avançados e receba atualizações exclusivas antes
+                da comunidade geral.
+              </p>
+              <ul class="store-bundle__list">
+                <li>Créditos bônus para testar novas mecânicas</li>
+                <li>Consultoria trimestral com nosso time de experiência</li>
+                <li>Prioridade em filas de suporte durante transmissões</li>
+              </ul>
+              <button class="button button--primary" type="button" data-open-account>Falar com vendas</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel panel--transparent store-security">
+          <div class="trust-banner trust-banner--store">
+            <div>
+              <h2>Confiança de ponta a ponta</h2>
+              <p>
+                Operamos com monitoramento contínuo, infraestrutura em múltiplas regiões e auditorias externas
+                para garantir a integridade das licenças distribuídas.
+              </p>
+            </div>
+            <ul class="trust-list">
+              <li>Checkout protegido por Stripe Radar</li>
+              <li>Criptografia ponta a ponta nos dados de sessão</li>
+              <li>Alertas proativos sobre expiração de licenças</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="panel panel--transparent store-newsletter">
+          <div class="newsletter">
+            <div class="newsletter__content">
+              <p class="newsletter__eyebrow">Receba novidades primeiro</p>
+              <h2>Assine os lançamentos em prévia</h2>
+              <p>
+                Atualizações de catálogo, integrações recém-lançadas e convites para betas fechados chegam
+                diretamente no seu email.
+              </p>
+            </div>
+            <form class="newsletter__form">
+              <label class="sr-only" for="newsletter-email">Email</label>
+              <input
+                id="newsletter-email"
+                class="newsletter__input"
+                type="email"
+                placeholder="seuemail@exemplo.com"
+                autocomplete="email"
+                required
+              />
+              <button class="button button--primary" type="submit">Quero receber</button>
+            </form>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="global-status" class="global-status" role="status" hidden></div>
+
+    <div class="account-drawer" id="account-drawer" aria-hidden="true">
+      <div class="account-drawer__overlay" data-close-account></div>
+      <div class="account-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="account-drawer-title">
+        <button class="account-drawer__close" id="account-close" type="button" aria-label="Fechar painel">
+          ✕
+        </button>
+        <div class="account-drawer__content">
+          <header class="account-drawer__header">
+            <p class="account-drawer__eyebrow">Acesso seguro</p>
+            <h2 id="account-drawer-title">Sua conta Saturn Games</h2>
+            <p class="account-drawer__subtitle">
+              Entre ou cadastre-se para finalizar compras e acompanhar licenças.
+            </p>
+          </header>
+          <section id="account-summary" class="account-summary" hidden>
+            <div class="account-summary__avatar" aria-hidden="true">
+              <span data-avatar-preview>👤</span>
+            </div>
+            <div class="account-summary__details">
+              <h3 id="account-name"></h3>
+              <p id="account-email" class="account-summary__email"></p>
+              <p class="account-summary__meta">ID do usuário: <span id="session-status"></span></p>
+            </div>
+            <div class="account-summary__actions">
+              <a class="button button--primary" href="/library.html">Abrir biblioteca</a>
+              <a class="button button--ghost" href="/payments.html">Ver pagamentos</a>
+            </div>
+          </section>
+          <div id="auth-forms" class="account-forms">
+            <form id="signup-form" class="card">
+              <h3>Criar conta</h3>
+              <label for="signup-email">Email</label>
+              <input id="signup-email" name="email" type="email" required autocomplete="email" />
+              <label for="signup-password">Senha</label>
+              <input
+                id="signup-password"
+                name="password"
+                type="password"
+                minlength="6"
+                required
+                autocomplete="new-password"
+              />
+              <button class="button button--primary" type="submit">Cadastrar</button>
+              <p class="helper">Você receberá um email de confirmação enviado pelo Supabase.</p>
+            </form>
+            <form id="login-form" class="card">
+              <h3>Entrar</h3>
+              <label for="login-email">Email</label>
+              <input id="login-email" name="email" type="email" required autocomplete="email" />
+              <label for="login-password">Senha</label>
+              <input
+                id="login-password"
+                name="password"
+                type="password"
+                required
+                autocomplete="current-password"
+              />
+              <button class="button" type="submit">Entrar</button>
+              <button class="button button--ghost" id="magic-link" type="button">Receber link mágico</button>
+              <p class="helper">Enviaremos um link de acesso instantâneo para seu email.</p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
