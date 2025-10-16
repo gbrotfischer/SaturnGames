@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saturn Games Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="/env.js" defer></script>
+    <script type="module" src="/app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="sidebar__logo">
+          <span class="sidebar__logo-mark">🪐</span>
+          <span class="sidebar__logo-text">Saturn Games</span>
+        </div>
+        <nav class="sidebar__nav">
+          <a class="nav-item active" href="#store">
+            <span class="nav-icon">🛒</span>
+            <span>Loja</span>
+          </a>
+          <a class="nav-item" href="#licenses">
+            <span class="nav-icon">🎮</span>
+            <span>Biblioteca</span>
+          </a>
+          <a class="nav-item" href="#payments">
+            <span class="nav-icon">💳</span>
+            <span>Pagamentos</span>
+          </a>
+          <a class="nav-item" href="#auth">
+            <span class="nav-icon">👤</span>
+            <span>Conta</span>
+          </a>
+        </nav>
+        <div class="sidebar__footer">
+          <p>&copy; <span id="year"></span> Saturn Games</p>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="topbar__search">
+            <span class="material-symbol">🔍</span>
+            <input type="search" placeholder="Buscar jogos" aria-label="Buscar jogos" disabled />
+          </div>
+          <button class="button button--ghost" id="signout" type="button">Sair</button>
+        </header>
+
+        <section class="hero" id="store">
+          <div class="hero__background"></div>
+          <div class="hero__content">
+            <div class="hero__text">
+              <p class="hero__eyebrow">Nova temporada</p>
+              <h1>Explore novos mundos sem limites</h1>
+              <p>
+                Acesse uma curadoria de jogos premium. Cada compra renova seu acesso por mais um mês —
+                simples assim.
+              </p>
+              <a class="button button--primary" href="#catalogo">Ver catálogo de jogos</a>
+            </div>
+            <div class="hero__card">
+              <div class="hero__tag">Em destaque</div>
+              <h2>The Witcher: Wild Hunt</h2>
+              <p>Reviva a saga de Geralt com visuais aprimorados e conteúdos extras inclusos.</p>
+              <button class="button button--secondary" type="button" disabled>Comprar em breve</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="catalogo">
+          <div class="panel__header">
+            <div>
+              <h2>Loja</h2>
+              <p class="panel__subtitle">Seleção personalizada para você</p>
+            </div>
+            <div class="status" id="games-status"></div>
+          </div>
+          <div id="games-grid" class="games-grid" aria-live="polite"></div>
+        </section>
+
+        <section class="panel" id="auth">
+          <div class="panel__header">
+            <div>
+              <h2>Conta</h2>
+              <p class="panel__subtitle">Crie ou acesse sua conta para comprar jogos</p>
+            </div>
+          </div>
+          <div class="account-grid">
+            <form id="signup-form" class="card">
+              <h3>Criar conta</h3>
+              <label for="signup-email">Email</label>
+              <input id="signup-email" name="email" type="email" required />
+              <label for="signup-password">Senha</label>
+              <input id="signup-password" name="password" type="password" minlength="6" required />
+              <button class="button button--primary" type="submit">Cadastrar</button>
+              <p class="helper">Um email de confirmação será enviado pelo Supabase.</p>
+            </form>
+
+            <form id="login-form" class="card">
+              <h3>Entrar</h3>
+              <label for="login-email">Email</label>
+              <input id="login-email" name="email" type="email" required />
+              <label for="login-password">Senha</label>
+              <input id="login-password" name="password" type="password" required />
+              <button class="button" type="submit">Entrar</button>
+              <button class="button button--ghost" id="magic-link" type="button">Enviar magic link</button>
+              <p class="helper">Faça login com um link mágico enviado ao seu email.</p>
+            </form>
+
+            <section class="card account-status" id="profile" hidden>
+              <h3>Bem-vindo de volta</h3>
+              <p class="account-status__email" id="profile-email"></p>
+              <p class="helper" id="session-status"></p>
+              <p>Gerencie suas compras e licenças com a navegação ao lado.</p>
+            </section>
+          </div>
+        </section>
+
+        <section class="panel" id="licenses" hidden>
+          <div class="panel__header">
+            <div>
+              <h2>Sua biblioteca</h2>
+              <p class="panel__subtitle">Jogos comprados e licenças ativas</p>
+            </div>
+            <div class="status" id="licenses-status"></div>
+          </div>
+          <ul id="licenses-list" class="library-list"></ul>
+        </section>
+
+        <section class="panel" id="payments" hidden>
+          <div class="panel__header">
+            <div>
+              <h2>Pagamentos</h2>
+              <p class="panel__subtitle">Histórico de compras recentes</p>
+            </div>
+            <div class="status" id="payments-status"></div>
+          </div>
+          <div class="table-wrapper">
+            <table class="table" aria-live="polite">
+              <thead>
+                <tr>
+                  <th>Jogo</th>
+                  <th>Valor</th>
+                  <th>Status</th>
+                  <th>Data</th>
+                </tr>
+              </thead>
+              <tbody id="payments-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="global-status" class="global-status" role="alert" hidden></div>
+  </body>
+</html>
