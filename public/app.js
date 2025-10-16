@@ -241,7 +241,10 @@ async function loadProtectedData() {
 }
 
 async function loadGames(force = false) {
-  if (!supabase) return [];
+  if (!supabase) {
+    if (dom.gamesStatus) dom.gamesStatus.textContent = 'Configure o Supabase para listar os jogos.';
+    return [];
+  }
 
   if (!force) {
     if (gamesCache.length > 0) {
@@ -336,59 +339,256 @@ async function initHomePage() {
   dom.homeFavorites.appendChild(fragment);
 }
 
-const fallbackArt = [
-  'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1511517006433-842c25d113e0?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1516117172878-fd2c41f4a759?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80'
+const galleryPool = [
+  'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1600&q=80',
+  'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1600&q=80',
+  'https://images.unsplash.com/photo-1511517006433-842c25d113e0?auto=format&fit=crop&w=1600&q=80',
+  'https://images.unsplash.com/photo-1516117172878-fd2c41f4a759?auto=format&fit=crop&w=1600&q=80',
+  'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1600&q=80',
+  'https://images.unsplash.com/photo-1518397387277-7843fa893f1e?auto=format&fit=crop&w=1600&q=80',
+  'https://images.unsplash.com/photo-1526413232644-8a50dd7e3221?auto=format&fit=crop&w=1600&q=80',
+  'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1600&q=80',
+  'https://images.unsplash.com/photo-1600180758890-6d9f4f1b0c18?auto=format&fit=crop&w=1600&q=80',
+  'https://images.unsplash.com/photo-1542759564-1613d27b6d77?auto=format&fit=crop&w=1600&q=80',
+  'https://images.unsplash.com/photo-1510172951991-856a654063f9?auto=format&fit=crop&w=1600&q=80',
+  'https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?auto=format&fit=crop&w=1600&q=80'
 ];
 
-function getGameArt(gameId = '') {
-  if (!gameId) return fallbackArt[0];
+const fallbackArt = galleryPool;
+
+const descriptionSnippets = [
+  'Desbloqueie interações ao vivo com comandos do chat e trilhas sincronizadas.',
+  'Ferramentas prontas para reações instantâneas e telas especiais durante a live.',
+  'Focado em retenção: ativa polls, alertas e efeitos responsivos em segundos.',
+  'Ideal para criadores que precisam de automações com baixa latência e alta estabilidade.'
+];
+
+const tagPool = [
+  'Triggers em segundos',
+  'Overlay dinâmico',
+  'Analytics ao vivo',
+  'Suporte prioritário',
+  'Compatível com TikTok',
+  'Eventos sonoros',
+  'Votações interativas',
+  'Pronto para OBS'
+];
+
+function getGameGallery(gameId = '') {
+  if (galleryPool.length === 0) return [];
   let hash = 0;
   for (let i = 0; i < gameId.length; i += 1) {
-    hash = (hash + gameId.charCodeAt(i) * (i + 11)) % 997;
+    hash = (hash + gameId.charCodeAt(i) * (i + 17)) % 9973;
   }
-  return fallbackArt[hash % fallbackArt.length];
+  const slides = [];
+  const baseIndex = hash % galleryPool.length;
+  const totalSlides = Math.min(4, galleryPool.length);
+  for (let i = 0; i < totalSlides; i += 1) {
+    slides.push(galleryPool[(baseIndex + i) % galleryPool.length]);
+  }
+  return slides;
+}
+
+function getGameArt(gameId = '') {
+  const gallery = getGameGallery(gameId);
+  if (!gallery.length) return galleryPool[0];
+  return gallery[0];
+}
+
+function getGameDescription(gameId = '') {
+  if (!descriptionSnippets.length) return '';
+  let hash = 0;
+  for (let i = 0; i < gameId.length; i += 1) {
+    hash = (hash + gameId.charCodeAt(i) * (i + 7)) % 7919;
+  }
+  return descriptionSnippets[hash % descriptionSnippets.length];
+}
+
+function getGameTags(gameId = '') {
+  if (tagPool.length === 0) return [];
+  let hash = 0;
+  for (let i = 0; i < gameId.length; i += 1) {
+    hash = (hash + gameId.charCodeAt(i) * (i + 5)) % 8861;
+  }
+  const tags = new Set();
+  let offset = 0;
+  while (tags.size < 3 && offset < tagPool.length) {
+    const index = (hash + offset) % tagPool.length;
+    tags.add(tagPool[index]);
+    offset += 1;
+  }
+  return Array.from(tags);
 }
 
 function createGameCard(game) {
   const card = document.createElement('article');
-  card.className = 'game-card';
+  card.className = 'store-card';
+  card.dataset.gameId = game.id;
 
-  const art = document.createElement('div');
-  art.className = 'game-card__art';
-  art.style.setProperty('--game-art', `url('${getGameArt(game.id)}')`);
+  const carousel = createGameCarousel(game);
 
   const body = document.createElement('div');
-  body.className = 'game-card__body';
+  body.className = 'store-card__body';
 
   const title = document.createElement('h3');
-  title.className = 'game-card__title';
+  title.className = 'store-card__title';
   title.textContent = game.name;
 
-  const price = document.createElement('p');
-  price.className = 'game-card__price';
-  price.textContent = formatCurrency(game.price_cents, game.currency);
+  const tags = document.createElement('div');
+  tags.className = 'store-card__tags';
+  getGameTags(game.id).forEach((label) => {
+    const chip = document.createElement('span');
+    chip.className = 'store-card__tag';
+    chip.textContent = label;
+    tags.appendChild(chip);
+  });
+
+  const description = document.createElement('p');
+  description.className = 'store-card__description';
+  description.textContent = getGameDescription(game.id);
 
   const meta = document.createElement('p');
-  meta.className = 'game-card__meta';
-  meta.textContent = 'Cada compra adiciona +1 mês de licença.';
+  meta.className = 'store-card__meta';
+  meta.textContent = 'Cada compra adiciona +1 mês de licença ativa no seu painel.';
+
+  const footer = document.createElement('div');
+  footer.className = 'store-card__footer';
+
+  const price = document.createElement('p');
+  price.className = 'store-card__price';
+  price.textContent = formatCurrency(game.price_cents, game.currency);
 
   const action = document.createElement('button');
   action.className = 'button button--primary';
+  action.type = 'button';
   action.textContent = 'Comprar agora';
   action.addEventListener('click', () => initiateCheckout(game.id));
 
-  body.appendChild(title);
-  body.appendChild(meta);
-  body.appendChild(price);
-  body.appendChild(action);
+  const note = document.createElement('p');
+  note.className = 'store-card__note';
+  note.textContent = 'Compatível com o Motor de Escuta Saturn, pronto para TikTok Live.';
 
-  card.appendChild(art);
+  footer.appendChild(price);
+  footer.appendChild(action);
+
+  body.appendChild(title);
+  if (tags.childElementCount) {
+    body.appendChild(tags);
+  }
+  body.appendChild(description);
+  body.appendChild(meta);
+  body.appendChild(footer);
+  body.appendChild(note);
+
+  card.appendChild(carousel);
   card.appendChild(body);
   return card;
+}
+
+function createGameCarousel(game) {
+  const gallery = getGameGallery(game.id);
+  const images = gallery.length ? gallery : [getGameArt(game.id)];
+  const carousel = document.createElement('div');
+  carousel.className = 'store-card__carousel';
+  carousel.dataset.count = String(images.length);
+  carousel.dataset.index = '0';
+  carousel.setAttribute('tabindex', '0');
+
+  const viewport = document.createElement('div');
+  viewport.className = 'store-card__viewport';
+  viewport.setAttribute('role', 'group');
+  viewport.setAttribute('aria-label', `Galeria do jogo ${game.name}`);
+
+  const track = document.createElement('div');
+  track.className = 'store-card__track';
+  track.style.setProperty('--slide-count', images.length);
+
+  images.forEach((src, index) => {
+    const slide = document.createElement('div');
+    slide.className = 'store-card__slide';
+    slide.style.setProperty('--slide-image', `url('${src}')`);
+    slide.setAttribute('role', 'group');
+    slide.setAttribute('aria-label', `Imagem ${index + 1} de ${images.length}`);
+    track.appendChild(slide);
+  });
+
+  viewport.appendChild(track);
+  carousel.appendChild(viewport);
+
+  if (images.length > 1) {
+    const prev = document.createElement('button');
+    prev.className = 'store-card__control store-card__control--prev';
+    prev.type = 'button';
+    prev.setAttribute('aria-label', 'Ver imagem anterior');
+    prev.innerHTML = '&#10094;';
+    prev.addEventListener('click', () => shiftCarousel(carousel, -1));
+
+    const next = document.createElement('button');
+    next.className = 'store-card__control store-card__control--next';
+    next.type = 'button';
+    next.setAttribute('aria-label', 'Ver próxima imagem');
+    next.innerHTML = '&#10095;';
+    next.addEventListener('click', () => shiftCarousel(carousel, 1));
+
+    const dots = document.createElement('div');
+    dots.className = 'store-card__dots';
+
+    images.forEach((_, index) => {
+      const dot = document.createElement('button');
+      dot.className = 'store-card__dot';
+      dot.type = 'button';
+      dot.setAttribute('aria-label', `Mostrar imagem ${index + 1}`);
+      dot.addEventListener('click', () => setCarouselIndex(carousel, index));
+      dots.appendChild(dot);
+    });
+
+    carousel.appendChild(prev);
+    carousel.appendChild(next);
+    carousel.appendChild(dots);
+  }
+
+  setCarouselIndex(carousel, 0, false);
+
+  carousel.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      shiftCarousel(carousel, -1);
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      shiftCarousel(carousel, 1);
+    }
+  });
+
+  return carousel;
+}
+
+function setCarouselIndex(carousel, nextIndex, animate = true) {
+  const count = Number(carousel.dataset.count || '0');
+  if (!count) return;
+  const track = carousel.querySelector('.store-card__track');
+  if (!track) return;
+  const sanitized = ((Number(nextIndex) % count) + count) % count;
+  carousel.dataset.index = String(sanitized);
+  if (!animate) {
+    track.classList.add('store-card__track--no-animate');
+    requestAnimationFrame(() => {
+      track.classList.remove('store-card__track--no-animate');
+    });
+  }
+  track.style.transform = `translateX(-${sanitized * 100}%)`;
+  carousel.querySelectorAll('.store-card__slide').forEach((slide, slideIndex) => {
+    slide.classList.toggle('is-active', slideIndex === sanitized);
+  });
+  carousel.querySelectorAll('.store-card__dot').forEach((dot, dotIndex) => {
+    dot.classList.toggle('is-active', dotIndex === sanitized);
+  });
+}
+
+function shiftCarousel(carousel, delta) {
+  const count = Number(carousel.dataset.count || '0');
+  if (!count) return;
+  const index = Number(carousel.dataset.index || '0');
+  setCarouselIndex(carousel, index + delta);
 }
 
 function createHomeFavoriteCard(game) {

@@ -16,54 +16,27 @@
     <script type="module" src="/app.js" defer></script>
   </head>
   <body data-page="store">
-    <div class="app-shell">
-      <aside class="sidebar">
-        <div class="sidebar__logo">
-          <span class="sidebar__logo-mark">🪐</span>
-          <span class="sidebar__logo-text">Saturn Games</span>
+    <header class="site-header">
+      <div class="promo-banner">
+        <div class="container promo-banner__inner">
+          <p>Garanta 45% OFF no primeiro bundle exclusivo para criadores TikTok.</p>
+          <a class="promo-banner__cta" href="/store.html">Aproveitar agora</a>
         </div>
-        <nav class="sidebar__nav" aria-label="Principal">
-          <a class="nav-item" data-page-link="home" href="/">
-            <span class="nav-icon">🏠</span>
-            <span>Visão geral</span>
+      </div>
+      <div class="navbar">
+        <div class="container navbar__inner">
+          <a class="brand" href="/">
+            <span class="brand__mark">🪐</span>
+            <span class="brand__text">Saturn Games</span>
           </a>
-          <a class="nav-item" data-page-link="store" href="/store.html">
-            <span class="nav-icon">🛒</span>
-            <span>Loja</span>
-          </a>
-          <a class="nav-item" data-page-link="library" href="/library.html">
-            <span class="nav-icon">🎮</span>
-            <span>Biblioteca</span>
-          </a>
-          <a class="nav-item" data-page-link="payments" href="/payments.html">
-            <span class="nav-icon">💳</span>
-            <span>Pagamentos</span>
-          </a>
-          <a class="nav-item" data-page-link="engine" href="/engine.html">
-            <span class="nav-icon">📡</span>
-            <span>Motor de escuta</span>
-          </a>
-        </nav>
-        <div class="sidebar__cta">
-          <h2>Suporte premium</h2>
-          <p>
-            Atendimento especializado 24/7 para creators que precisam de respostas rápidas antes de
-            grandes transmissões.
-          </p>
-          <button class="button button--ghost" type="button" data-open-account>Falar com o time</button>
-        </div>
-        <div class="sidebar__footer">
-          <p>&copy; <span data-year></span> Saturn Games</p>
-        </div>
-      </aside>
-
-      <main class="main">
-        <header class="topbar">
-          <div class="topbar__title">
-            <p class="topbar__subtitle">Catálogo oficial</p>
-            <h1>Loja de jogos interativos</h1>
-          </div>
-          <div class="topbar__actions">
+          <nav class="navbar__nav" aria-label="Principal">
+            <a class="navbar__link" data-page-link="home" href="/">Home</a>
+            <a class="navbar__link" data-page-link="store" href="/store.html">Loja</a>
+            <a class="navbar__link" data-page-link="library" href="/library.html">Biblioteca</a>
+            <a class="navbar__link" data-page-link="payments" href="/payments.html">Pagamentos</a>
+            <a class="navbar__link" data-page-link="engine" href="/engine.html">Motor</a>
+          </nav>
+          <div class="navbar__actions">
             <button class="button button--ghost" id="signout" type="button" hidden>Sair</button>
             <button
               class="avatar-button"
@@ -75,51 +48,44 @@
               <span class="avatar-button__icon" data-avatar-initial>👤</span>
             </button>
           </div>
-        </header>
+        </div>
+      </div>
+    </header>
 
-        <section class="hero hero--cover" style="--hero-image: url('https://images.unsplash.com/photo-1516117172878-fd2c41f4a759?auto=format&fit=crop&w=1400&q=80');">
-          <div class="hero__badge">Licenças mensais transparentes</div>
-          <div class="hero__content">
-            <div class="hero__text">
-              <h2>Seleção curada para criadores ao vivo</h2>
-              <p>
-                Cada título disponível aqui foi desenvolvido para reagir ao chat TikTok em segundos,
-                com triggers seguros e monitoramento constante.
-              </p>
-              <p class="hero__note">Faça login para concluir compras com checkout Stripe protegido.</p>
-            </div>
+    <main class="store">
+      <section class="store-catalog">
+        <div class="container">
+          <div class="store-catalog__intro">
+            <p class="eyebrow">Catálogo oficial</p>
+            <h1>Jogos originais para lives TikTok</h1>
+            <p class="store-catalog__lead">
+              Escolha experiências criadas para maximizar a interação com o chat e cada compra adiciona
+              +1 mês de licença imediata.
+            </p>
           </div>
-        </section>
+          <p class="section-status" id="games-status" aria-live="polite"></p>
+          <div class="store-grid" id="games-grid" aria-live="polite"></div>
+        </div>
+      </section>
+    </main>
 
-        <section class="panel">
-          <header class="panel__header">
-            <div>
-              <h2>Jogos disponíveis</h2>
-              <p class="panel__subtitle">Adquira licenças que adicionam +1 mês de acesso imediato.</p>
-            </div>
-            <div class="status" id="games-status" aria-live="polite"></div>
-          </header>
-          <div id="games-grid" class="games-grid" aria-live="polite"></div>
-        </section>
-
-        <section class="panel panel--transparent">
-          <div class="trust-banner">
-            <div>
-              <h2>Checkout protegido</h2>
-              <p>
-                Todas as compras são processadas via Stripe com monitoramento antifraude e recibos
-                automáticos enviados por email.
-              </p>
-            </div>
-            <ul class="trust-list">
-              <li>Confirmação instantânea no portal</li>
-              <li>Reembolsos assistidos pelo suporte</li>
-              <li>Renovação simples a cada nova compra</li>
-            </ul>
-          </div>
-        </section>
-      </main>
-    </div>
+    <footer class="site-footer">
+      <div class="container site-footer__inner">
+        <div class="site-footer__brand">
+          <span class="brand__mark">🪐</span>
+          <span class="brand__text">Saturn Games</span>
+        </div>
+        <div class="site-footer__meta">
+          <p>© <span data-year></span> Saturn Games Studio · Todos os direitos reservados.</p>
+          <nav aria-label="Links institucionais">
+            <a href="/store.html">Loja</a>
+            <a href="/payments.html">Histórico</a>
+            <a href="/engine.html">Motor</a>
+            <a href="mailto:suporte@saturn.games">Contato</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
 
     <div id="global-status" class="global-status" role="status" hidden></div>
 
