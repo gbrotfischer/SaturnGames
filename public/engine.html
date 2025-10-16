@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pagamento concluído - Saturn Games</title>
+    <title>Motor de escuta Saturn Games</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -11,10 +11,11 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/styles.css" />
+    <script src="https://js.stripe.com/v3/"></script>
     <script src="/env.js" defer></script>
     <script type="module" src="/app.js" defer></script>
   </head>
-  <body data-page="success">
+  <body data-page="engine">
     <div class="app-shell">
       <aside class="sidebar">
         <div class="sidebar__logo">
@@ -44,9 +45,12 @@
           </a>
         </nav>
         <div class="sidebar__cta">
-          <h2>Próximos passos</h2>
-          <p>Enquanto confirmamos seu pagamento, explore o portal e acompanhe suas licenças.</p>
-          <a class="button button--ghost" href="/library.html">Ver biblioteca</a>
+          <h2>Integre seu jogo</h2>
+          <p>
+            Nosso time técnico orienta publishers parceiros a conectar novos títulos ao motor em fases
+            rápidas e seguras.
+          </p>
+          <a class="button button--ghost" href="mailto:partners@saturn.games">Falar com parcerias</a>
         </div>
         <div class="sidebar__footer">
           <p>&copy; <span data-year></span> Saturn Games</p>
@@ -56,8 +60,8 @@
       <main class="main">
         <header class="topbar">
           <div class="topbar__title">
-            <p class="topbar__subtitle">Tudo certo!</p>
-            <h1>Pagamento em processamento</h1>
+            <p class="topbar__subtitle">Tecnologia proprietária</p>
+            <h1>Motor de escutas para lives TikTok</h1>
           </div>
           <div class="topbar__actions">
             <button class="button button--ghost" id="signout" type="button" hidden>Sair</button>
@@ -73,28 +77,110 @@
           </div>
         </header>
 
-        <section class="hero hero--cover" style="--hero-image: url('https://images.unsplash.com/photo-1511517006433-842c25d113e0?auto=format&fit=crop&w=1400&q=80');">
-          <div class="hero__badge">Obrigado pela compra</div>
-          <div class="hero__content">
+        <section class="hero hero--cover" style="--hero-image: url('https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1400&q=80');">
+          <div class="hero__badge">Streaming inteligente</div>
+          <div class="hero__content hero__content--split">
             <div class="hero__text">
-              <h2>Estamos confirmando a sua licença</h2>
+              <h2>Escuta ativa, respostas instantâneas</h2>
               <p>
-                Assim que o Stripe validar a transação, renovaremos o acesso automaticamente no portal.
-                Você receberá um email com os detalhes em instantes.
+                O motor Saturn captura eventos da live TikTok — gifts, follows, comentários-chave — e
+                transforma tudo em triggers seguros para jogos interativos.
               </p>
               <div class="hero__actions">
-                <a class="button button--primary" href="/library.html">Ver minha biblioteca</a>
-                <a class="button button--ghost" href="/payments.html">Conferir pagamentos</a>
+                <a class="button button--primary" href="/store.html">Ver jogos compatíveis</a>
+                <button class="button button--ghost" type="button" data-open-account>Acessar painel</button>
               </div>
+            </div>
+            <div class="hero__panel">
+              <article class="diagram-card">
+                <h3>Pipeline em 4 etapas</h3>
+                <ol>
+                  <li>Escuta autenticada na live via tokens oficiais.</li>
+                  <li>Normalização e enriquecimento dos eventos em tempo real.</li>
+                  <li>Envio de triggers criptografados para os jogos ativos.</li>
+                  <li>Feedback instantâneo exibido no painel e no chat.</li>
+                </ol>
+              </article>
             </div>
           </div>
         </section>
 
+        <section class="panel">
+          <header class="panel__header">
+            <div>
+              <h2>Camadas de segurança</h2>
+              <p class="panel__subtitle">Mais que estabilidade: governança e confiança para marcas.</p>
+            </div>
+          </header>
+          <div class="security-grid">
+            <article class="security-tile">
+              <h3>Tokens dedicados</h3>
+              <p>Isolamos credenciais por criador com rotação automática e alertas de uso.</p>
+            </article>
+            <article class="security-tile">
+              <h3>Monitoramento 24/7</h3>
+              <p>Alertas proativos sobre quedas e latências com failover automático para redundância.</p>
+            </article>
+            <article class="security-tile">
+              <h3>Auditoria completa</h3>
+              <p>Eventos são registrados no Supabase com trilhas de auditoria e logs assinados.</p>
+            </article>
+            <article class="security-tile">
+              <h3>Proteção de dados</h3>
+              <p>Todos os payloads sensíveis são criptografados em trânsito e repouso.</p>
+            </article>
+          </div>
+        </section>
+
         <section class="panel panel--transparent">
-          <div class="support-card">
-            <h2>Precisa de suporte imediato?</h2>
-            <p>Se o jogo não aparecer após alguns minutos, abra um ticket pelo painel da conta.</p>
-            <button class="button button--ghost" type="button" data-open-account>Abrir painel</button>
+          <header class="panel__header">
+            <div>
+              <h2>Como funciona na prática</h2>
+              <p class="panel__subtitle">Integração guiada para colocar seu jogo em destaque no portal.</p>
+            </div>
+          </header>
+          <div class="timeline">
+            <article class="timeline__item">
+              <span class="timeline__step">1</span>
+              <div class="timeline__body">
+                <h3>Descoberta técnica</h3>
+                <p>
+                  Diagnosticamos requisitos do jogo, eventos desejados e estrutura de comando para
+                  garantir compatibilidade com nosso SDK.
+                </p>
+              </div>
+            </article>
+            <article class="timeline__item">
+              <span class="timeline__step">2</span>
+              <div class="timeline__body">
+                <h3>Sandbox controlada</h3>
+                <p>
+                  Rodamos testes em ambiente fechado com tokens de desenvolvimento e monitoramento
+                  completo de logs.
+                </p>
+              </div>
+            </article>
+            <article class="timeline__item">
+              <span class="timeline__step">3</span>
+              <div class="timeline__body">
+                <h3>Lançamento assistido</h3>
+                <p>
+                  Equipe de suporte acompanha as primeiras lives, garantindo acionamentos e cobrindo
+                  qualquer ajuste.
+                </p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="cta-panel">
+          <div class="cta-panel__content">
+            <h2>Quer testar o motor Saturn?</h2>
+            <p>Solicite acesso beta e receba nosso guia técnico completo para integrações.</p>
+          </div>
+          <div class="cta-panel__actions">
+            <a class="button button--primary" href="mailto:partners@saturn.games">Solicitar acesso</a>
+            <button class="button button--ghost" type="button" data-open-account>Entrar no portal</button>
           </div>
         </section>
       </main>
@@ -126,8 +212,8 @@
               <p class="account-summary__meta">ID do usuário: <span id="session-status"></span></p>
             </div>
             <div class="account-summary__actions">
-              <a class="button button--primary" href="/library.html">Ver biblioteca</a>
-              <a class="button button--ghost" href="/payments.html">Ver pagamentos</a>
+              <a class="button button--primary" href="/store.html">Ver catálogo</a>
+              <a class="button button--ghost" href="/library.html">Ver biblioteca</a>
             </div>
           </section>
           <div id="auth-forms" class="account-forms">

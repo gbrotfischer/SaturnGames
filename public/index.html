@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Saturn Games Portal</title>
+    <title>Saturn Games Portal para Streamers</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -15,151 +15,320 @@
     <script src="/env.js" defer></script>
     <script type="module" src="/app.js" defer></script>
   </head>
-  <body>
+  <body data-page="home">
     <div class="app-shell">
       <aside class="sidebar">
         <div class="sidebar__logo">
           <span class="sidebar__logo-mark">🪐</span>
           <span class="sidebar__logo-text">Saturn Games</span>
         </div>
-        <nav class="sidebar__nav">
-          <a class="nav-item active" href="#store">
+        <nav class="sidebar__nav" aria-label="Principal">
+          <a class="nav-item" data-page-link="home" href="/">
+            <span class="nav-icon">🏠</span>
+            <span>Visão geral</span>
+          </a>
+          <a class="nav-item" data-page-link="store" href="/store.html">
             <span class="nav-icon">🛒</span>
             <span>Loja</span>
           </a>
-          <a class="nav-item" href="#licenses">
+          <a class="nav-item" data-page-link="library" href="/library.html">
             <span class="nav-icon">🎮</span>
             <span>Biblioteca</span>
           </a>
-          <a class="nav-item" href="#payments">
+          <a class="nav-item" data-page-link="payments" href="/payments.html">
             <span class="nav-icon">💳</span>
             <span>Pagamentos</span>
           </a>
-          <a class="nav-item" href="#auth">
-            <span class="nav-icon">👤</span>
-            <span>Conta</span>
+          <a class="nav-item" data-page-link="engine" href="/engine.html">
+            <span class="nav-icon">📡</span>
+            <span>Motor de escuta</span>
           </a>
         </nav>
+        <div class="sidebar__cta">
+          <h2>Plataforma confiável</h2>
+          <p>
+            Jogos originais para streamers que priorizam segurança, suporte dedicado e
+            performance estável para lives de alto impacto.
+          </p>
+          <a class="button button--ghost" href="/store.html">Abrir loja</a>
+        </div>
         <div class="sidebar__footer">
-          <p>&copy; <span id="year"></span> Saturn Games</p>
+          <p>&copy; <span data-year></span> Saturn Games</p>
         </div>
       </aside>
 
       <main class="main">
         <header class="topbar">
-          <div class="topbar__search">
-            <span class="material-symbol">🔍</span>
-            <input type="search" placeholder="Buscar jogos" aria-label="Buscar jogos" disabled />
+          <div class="topbar__title">
+            <p class="topbar__subtitle">Portal oficial para criadores ao vivo</p>
+            <h1>Bem-vindo ao Saturn Games</h1>
           </div>
-          <button class="button button--ghost" id="signout" type="button">Sair</button>
+          <div class="topbar__actions">
+            <button class="button button--ghost" id="signout" type="button" hidden>Sair</button>
+            <button
+              class="avatar-button"
+              id="account-toggle"
+              type="button"
+              aria-haspopup="dialog"
+              aria-expanded="false"
+            >
+              <span class="avatar-button__icon" data-avatar-initial>👤</span>
+            </button>
+          </div>
         </header>
 
-        <section class="hero" id="store">
-          <div class="hero__background"></div>
-          <div class="hero__content">
+        <section class="hero hero--cover" style="--hero-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1400&q=80');">
+          <div class="hero__badge">Feito para lives TikTok</div>
+          <div class="hero__content hero__content--split">
             <div class="hero__text">
-              <p class="hero__eyebrow">Nova temporada</p>
-              <h1>Explore novos mundos sem limites</h1>
+              <h2>Jogos originais desenhados para engajar sua audiência</h2>
               <p>
-                Acesse uma curadoria de jogos premium. Cada compra renova seu acesso por mais um mês —
-                simples assim.
+                Somos o hub oficial onde streamers profissionais encontram experiências criadas
+                para maximizar interação, monetização e retenção em lives TikTok. Licenças
+                transparentes, suporte humano e integrações confiáveis.
               </p>
-              <a class="button button--primary" href="#catalogo">Ver catálogo de jogos</a>
+              <div class="hero__actions">
+                <a class="button button--primary" href="/store.html">Explorar catálogo</a>
+                <a class="button button--ghost" href="/engine.html">Conhecer o motor de escuta</a>
+              </div>
             </div>
-            <div class="hero__card">
-              <div class="hero__tag">Em destaque</div>
-              <h2>The Witcher: Wild Hunt</h2>
-              <p>Reviva a saga de Geralt com visuais aprimorados e conteúdos extras inclusos.</p>
-              <button class="button button--secondary" type="button" disabled>Comprar em breve</button>
+            <div class="hero__panel">
+              <article class="security-card">
+                <h3>Confiança no centro</h3>
+                <ul>
+                  <li>Checkout seguro com Stripe e monitoramento antifraude.</li>
+                  <li>Licenças renovadas automaticamente a cada compra confirmada.</li>
+                  <li>Integração nativa com Supabase para autenticação e dados.</li>
+                </ul>
+                <p class="security-card__footnote">
+                  Cada transação gera comprovante e histórico detalhado dentro do portal.
+                </p>
+              </article>
             </div>
           </div>
         </section>
 
-        <section class="panel" id="catalogo">
-          <div class="panel__header">
+        <section class="panel">
+          <header class="panel__header">
             <div>
-              <h2>Loja</h2>
-              <p class="panel__subtitle">Seleção personalizada para você</p>
+              <h2>Por que os streamers escolhem a Saturn?</h2>
+              <p class="panel__subtitle">
+                Sua live merece ferramentas que reforçam segurança e ampliam o alcance da comunidade.
+              </p>
             </div>
-            <div class="status" id="games-status"></div>
+          </header>
+          <div class="feature-grid">
+            <article class="feature-card">
+              <img
+                src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=900&q=80"
+                alt="Streamer interagindo com o chat"
+              />
+              <div class="feature-card__body">
+                <h3>Engajamento imediato</h3>
+                <p>
+                  Jogos projetados para responder em tempo real aos eventos do chat, incluindo gifts,
+                  comentários e desafios.
+                </p>
+              </div>
+            </article>
+            <article class="feature-card">
+              <img
+                src="https://images.unsplash.com/photo-1511517006433-842c25d113e0?auto=format&fit=crop&w=900&q=80"
+                alt="Dashboard profissional"
+              />
+              <div class="feature-card__body">
+                <h3>Controles profissionais</h3>
+                <p>
+                  Painéis intuitivos para ativar eventos, ajustar dificuldade e monitorar métricas sem
+                  interromper a transmissão.
+                </p>
+              </div>
+            </article>
+            <article class="feature-card">
+              <img
+                src="https://images.unsplash.com/photo-1526498460520-4c246339dccb?auto=format&fit=crop&w=900&q=80"
+                alt="Teclado gamer iluminado"
+              />
+              <div class="feature-card__body">
+                <h3>Infraestrutura segura</h3>
+                <p>
+                  Dados protegidos com Supabase e políticas de acesso precisas. Transparência em cada
+                  licença emitida.
+                </p>
+              </div>
+            </article>
           </div>
-          <div id="games-grid" class="games-grid" aria-live="polite"></div>
         </section>
 
-        <section class="panel" id="auth">
-          <div class="panel__header">
+        <section class="panel">
+          <header class="panel__header">
             <div>
-              <h2>Conta</h2>
-              <p class="panel__subtitle">Crie ou acesse sua conta para comprar jogos</p>
+              <h2>Experiências destaque</h2>
+              <p class="panel__subtitle">
+                Conteúdos originais que potencializam lives interativas. Disponíveis agora na loja.
+              </p>
             </div>
-          </div>
-          <div class="account-grid">
-            <form id="signup-form" class="card">
-              <h3>Criar conta</h3>
-              <label for="signup-email">Email</label>
-              <input id="signup-email" name="email" type="email" required />
-              <label for="signup-password">Senha</label>
-              <input id="signup-password" name="password" type="password" minlength="6" required />
-              <button class="button button--primary" type="submit">Cadastrar</button>
-              <p class="helper">Um email de confirmação será enviado pelo Supabase.</p>
-            </form>
-
-            <form id="login-form" class="card">
-              <h3>Entrar</h3>
-              <label for="login-email">Email</label>
-              <input id="login-email" name="email" type="email" required />
-              <label for="login-password">Senha</label>
-              <input id="login-password" name="password" type="password" required />
-              <button class="button" type="submit">Entrar</button>
-              <button class="button button--ghost" id="magic-link" type="button">Enviar magic link</button>
-              <p class="helper">Faça login com um link mágico enviado ao seu email.</p>
-            </form>
-
-            <section class="card account-status" id="profile" hidden>
-              <h3>Bem-vindo de volta</h3>
-              <p class="account-status__email" id="profile-email"></p>
-              <p class="helper" id="session-status"></p>
-              <p>Gerencie suas compras e licenças com a navegação ao lado.</p>
-            </section>
+            <a class="link" href="/store.html">Abrir loja</a>
+          </header>
+          <div class="spotlight-grid">
+            <article class="spotlight-card">
+              <div
+                class="spotlight-card__media"
+                style="background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80');"
+              ></div>
+              <div class="spotlight-card__body">
+                <h3>Neon Arena</h3>
+                <p>
+                  Batalhas cooperativas em tempo real onde a torcida envia boosts e sabotagens via
+                  chat. Ideal para eventos especiais.
+                </p>
+              </div>
+            </article>
+            <article class="spotlight-card">
+              <div
+                class="spotlight-card__media"
+                style="background-image: url('https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80');"
+              ></div>
+              <div class="spotlight-card__body">
+                <h3>Orbital Rush</h3>
+                <p>
+                  Corrida espacial que recompensa espectadores engajados com escolhas que mudam o
+                  destino da nave ao vivo.
+                </p>
+              </div>
+            </article>
+            <article class="spotlight-card">
+              <div
+                class="spotlight-card__media"
+                style="background-image: url('https://images.unsplash.com/photo-1516117172878-fd2c41f4a759?auto=format&fit=crop&w=1200&q=80');"
+              ></div>
+              <div class="spotlight-card__body">
+                <h3>Pulse Labyrinth</h3>
+                <p>
+                  Quebra-cabeças cooperativos sincronizados com batidas musicais. Cada doação abre
+                  novas rotas e eventos exclusivos.
+                </p>
+              </div>
+            </article>
           </div>
         </section>
 
-        <section class="panel" id="licenses" hidden>
+        <section class="panel panel--gradient">
           <div class="panel__header">
             <div>
-              <h2>Sua biblioteca</h2>
-              <p class="panel__subtitle">Jogos comprados e licenças ativas</p>
+              <h2>Novidades em breve</h2>
+              <p class="panel__subtitle">
+                Estamos expandindo o catálogo com experiências pensadas para o público TikTok.
+              </p>
             </div>
-            <div class="status" id="licenses-status"></div>
           </div>
-          <ul id="licenses-list" class="library-list"></ul>
+          <div class="coming-soon">
+            <article class="coming-card">
+              <h3>ForgeCast Studio</h3>
+              <p>
+                Ferramentas para criar missões patrocinadas ao vivo, com rotas programáveis e
+                recompensas para a audiência.
+              </p>
+            </article>
+            <article class="coming-card">
+              <h3>LiveSync Battles</h3>
+              <p>
+                Combates assimétricos em que o chat escolhe habilidades, bosses e eventos de risco em
+                tempo real.
+              </p>
+            </article>
+            <article class="coming-card">
+              <h3>Atlas Vox</h3>
+              <p>
+                Narrativas interativas baseadas em voz, onde palavras-chave da live desbloqueiam
+                capítulos secretos durante a transmissão.
+              </p>
+            </article>
+          </div>
         </section>
 
-        <section class="panel" id="payments" hidden>
-          <div class="panel__header">
-            <div>
-              <h2>Pagamentos</h2>
-              <p class="panel__subtitle">Histórico de compras recentes</p>
-            </div>
-            <div class="status" id="payments-status"></div>
+        <section class="cta-panel">
+          <div class="cta-panel__content">
+            <h2>Pronto para elevar sua live?</h2>
+            <p>
+              Garanta jogos originais com licenciamento mensal simples, suporte rápido e relatórios de
+              desempenho consolidados.
+            </p>
           </div>
-          <div class="table-wrapper">
-            <table class="table" aria-live="polite">
-              <thead>
-                <tr>
-                  <th>Jogo</th>
-                  <th>Valor</th>
-                  <th>Status</th>
-                  <th>Data</th>
-                </tr>
-              </thead>
-              <tbody id="payments-body"></tbody>
-            </table>
+          <div class="cta-panel__actions">
+            <a class="button button--primary" href="/store.html">Comprar licenças</a>
+            <button class="button button--ghost" type="button" data-open-account>Entrar na minha conta</button>
           </div>
         </section>
       </main>
     </div>
 
-    <div id="global-status" class="global-status" role="alert" hidden></div>
+    <div id="global-status" class="global-status" role="status" hidden></div>
+
+    <div class="account-drawer" id="account-drawer" aria-hidden="true">
+      <div class="account-drawer__overlay" data-close-account></div>
+      <div class="account-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="account-drawer-title">
+        <button class="account-drawer__close" id="account-close" type="button" aria-label="Fechar painel">
+          ✕
+        </button>
+        <div class="account-drawer__content">
+          <header class="account-drawer__header">
+            <p class="account-drawer__eyebrow">Acesso seguro</p>
+            <h2 id="account-drawer-title">Sua conta Saturn Games</h2>
+            <p class="account-drawer__subtitle">
+              Entre ou cadastre-se para acompanhar licenças, pagamentos e histórico de uso.
+            </p>
+          </header>
+          <section id="account-summary" class="account-summary" hidden>
+            <div class="account-summary__avatar" aria-hidden="true">
+              <span data-avatar-preview>👤</span>
+            </div>
+            <div class="account-summary__details">
+              <h3 id="account-name"></h3>
+              <p id="account-email" class="account-summary__email"></p>
+              <p class="account-summary__meta">ID do usuário: <span id="session-status"></span></p>
+            </div>
+            <div class="account-summary__actions">
+              <a class="button button--primary" href="/library.html">Abrir biblioteca</a>
+              <a class="button button--ghost" href="/payments.html">Ver pagamentos</a>
+            </div>
+          </section>
+          <div id="auth-forms" class="account-forms">
+            <form id="signup-form" class="card">
+              <h3>Criar conta</h3>
+              <label for="signup-email">Email</label>
+              <input id="signup-email" name="email" type="email" required autocomplete="email" />
+              <label for="signup-password">Senha</label>
+              <input
+                id="signup-password"
+                name="password"
+                type="password"
+                minlength="6"
+                required
+                autocomplete="new-password"
+              />
+              <button class="button button--primary" type="submit">Cadastrar</button>
+              <p class="helper">Você receberá um email de confirmação enviado pelo Supabase.</p>
+            </form>
+            <form id="login-form" class="card">
+              <h3>Entrar</h3>
+              <label for="login-email">Email</label>
+              <input id="login-email" name="email" type="email" required autocomplete="email" />
+              <label for="login-password">Senha</label>
+              <input
+                id="login-password"
+                name="password"
+                type="password"
+                required
+                autocomplete="current-password"
+              />
+              <button class="button" type="submit">Entrar</button>
+              <button class="button button--ghost" id="magic-link" type="button">Receber link mágico</button>
+              <p class="helper">Enviaremos um link de acesso instantâneo para seu email.</p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

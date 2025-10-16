@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pagamento concluído - Saturn Games</title>
+    <title>Biblioteca Saturn Games</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -11,10 +11,11 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/styles.css" />
+    <script src="https://js.stripe.com/v3/"></script>
     <script src="/env.js" defer></script>
     <script type="module" src="/app.js" defer></script>
   </head>
-  <body data-page="success">
+  <body data-page="library">
     <div class="app-shell">
       <aside class="sidebar">
         <div class="sidebar__logo">
@@ -44,9 +45,12 @@
           </a>
         </nav>
         <div class="sidebar__cta">
-          <h2>Próximos passos</h2>
-          <p>Enquanto confirmamos seu pagamento, explore o portal e acompanhe suas licenças.</p>
-          <a class="button button--ghost" href="/library.html">Ver biblioteca</a>
+          <h2>Atualize sempre</h2>
+          <p>
+            Licenças expiram mensalmente. Garanta sua renovação com antecedência para evitar pausas na
+            live.
+          </p>
+          <a class="button button--ghost" href="/store.html">Renovar licenças</a>
         </div>
         <div class="sidebar__footer">
           <p>&copy; <span data-year></span> Saturn Games</p>
@@ -56,8 +60,8 @@
       <main class="main">
         <header class="topbar">
           <div class="topbar__title">
-            <p class="topbar__subtitle">Tudo certo!</p>
-            <h1>Pagamento em processamento</h1>
+            <p class="topbar__subtitle">Jogos liberados</p>
+            <h1>Sua biblioteca</h1>
           </div>
           <div class="topbar__actions">
             <button class="button button--ghost" id="signout" type="button" hidden>Sair</button>
@@ -73,28 +77,42 @@
           </div>
         </header>
 
-        <section class="hero hero--cover" style="--hero-image: url('https://images.unsplash.com/photo-1511517006433-842c25d113e0?auto=format&fit=crop&w=1400&q=80');">
-          <div class="hero__badge">Obrigado pela compra</div>
+        <section class="hero hero--cover" style="--hero-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1400&q=80');">
+          <div class="hero__badge">Gerencie o acesso da sua live</div>
           <div class="hero__content">
             <div class="hero__text">
-              <h2>Estamos confirmando a sua licença</h2>
+              <h2>Todos os seus títulos ativos, em um único lugar</h2>
               <p>
-                Assim que o Stripe validar a transação, renovaremos o acesso automaticamente no portal.
-                Você receberá um email com os detalhes em instantes.
+                Visualize expirations, status e histórico de renovações. Reative jogos expirados em
+                poucos cliques.
               </p>
-              <div class="hero__actions">
-                <a class="button button--primary" href="/library.html">Ver minha biblioteca</a>
-                <a class="button button--ghost" href="/payments.html">Conferir pagamentos</a>
-              </div>
             </div>
           </div>
         </section>
 
+        <section class="panel">
+          <header class="panel__header">
+            <div>
+              <h2>Licenças</h2>
+              <p class="panel__subtitle">Acesso válido por 30 dias a partir da última compra.</p>
+            </div>
+            <div class="status" id="licenses-status" aria-live="polite"></div>
+          </header>
+          <div id="library-auth-prompt" class="auth-prompt" hidden>
+            <p>Entre em sua conta para visualizar os jogos liberados para sua live.</p>
+            <button class="button button--primary" type="button" data-open-account>Fazer login</button>
+          </div>
+          <ul id="licenses-list" class="library-list"></ul>
+        </section>
+
         <section class="panel panel--transparent">
           <div class="support-card">
-            <h2>Precisa de suporte imediato?</h2>
-            <p>Se o jogo não aparecer após alguns minutos, abra um ticket pelo painel da conta.</p>
-            <button class="button button--ghost" type="button" data-open-account>Abrir painel</button>
+            <h2>Precisa de ajuda?</h2>
+            <p>
+              Nosso time acompanha cada integração com testes guiados para garantir que o jogo esteja
+              perfeito antes da live.
+            </p>
+            <button class="button button--ghost" type="button" data-open-account>Contatar suporte</button>
           </div>
         </section>
       </main>
@@ -126,7 +144,7 @@
               <p class="account-summary__meta">ID do usuário: <span id="session-status"></span></p>
             </div>
             <div class="account-summary__actions">
-              <a class="button button--primary" href="/library.html">Ver biblioteca</a>
+              <a class="button button--primary" href="/store.html">Comprar novos jogos</a>
               <a class="button button--ghost" href="/payments.html">Ver pagamentos</a>
             </div>
           </section>
