@@ -39,19 +39,22 @@ const dom = {
 dom.year.textContent = new Date().getFullYear();
 
 let currentSession = null;
+let gamesCache = [];
+let gamesLoadingPromise = null;
+const gamesIndex = new Map();
 
 async function init() {
   attachEventListeners();
   const { data } = await supabase.auth.getSession();
   currentSession = data.session;
+
+  await loadGames();
   await updateAuthState();
 
   supabase.auth.onAuthStateChange(async (_event, session) => {
     currentSession = session;
     await updateAuthState();
   });
-
-  await loadGames();
 }
 
 function attachEventListeners() {
@@ -120,17 +123,28 @@ function attachEventListeners() {
 }
 
 async function updateAuthState() {
-  if (currentSession?.user) {
+  const isAuthenticated = Boolean(currentSession?.user);
+
+  if (dom.signout) {
+    dom.signout.hidden = !isAuthenticated;
+  }
+
+  if (isAuthenticated) {
+    dom.signupForm.hidden = true;
+    dom.loginForm.hidden = true;
     dom.profileSection.hidden = false;
-    dom.authSection.hidden = true;
     dom.licensesSection.hidden = false;
     dom.paymentsSection.hidden = false;
-    dom.profileEmail.textContent = currentSession.user.email || 'Jogador';
+
+    const userEmail = currentSession.user.email || 'Jogador';
+    dom.profileEmail.textContent = userEmail;
     dom.sessionStatus.textContent = `ID do usuário: ${currentSession.user.id}`;
+
     await loadUserData();
   } else {
+    dom.signupForm.hidden = false;
+    dom.loginForm.hidden = false;
     dom.profileSection.hidden = true;
-    dom.authSection.hidden = false;
     dom.licensesSection.hidden = true;
     dom.paymentsSection.hidden = true;
     dom.profileEmail.textContent = '';
@@ -140,32 +154,65 @@ async function updateAuthState() {
   }
 }
 
-async function loadGames() {
+async function loadGames(force = false) {
+  if (!force) {
+    if (gamesCache.length > 0) {
+      renderGames(gamesCache);
+      return gamesCache;
+    }
+    if (gamesLoadingPromise) {
+      return gamesLoadingPromise;
+    }
+  }
+
   dom.gamesStatus.textContent = 'Carregando jogos...';
   dom.gamesGrid.innerHTML = '';
 
-  const { data, error } = await supabase
-    .from('games')
-    .select('id,name,price_cents,currency')
-    .order('name');
+  gamesLoadingPromise = (async () => {
+    const { data, error } = await supabase
+      .from('games')
+      .select('id,name,price_cents,currency')
+      .order('name');
 
-  if (error) {
-    dom.gamesStatus.textContent = 'Erro ao carregar os jogos.';
-    showGlobalStatus(error.message, 'error');
-    return;
-  }
+    if (error) {
+      dom.gamesStatus.textContent = 'Erro ao carregar os jogos.';
+      showGlobalStatus(error.message, 'error');
+      gamesCache = [];
+      gamesIndex.clear();
+      return [];
+    }
 
-  if (!data || data.length === 0) {
-    dom.gamesStatus.textContent = 'Nenhum jogo cadastrado ainda.';
-    return;
-  }
+    gamesCache = data ?? [];
+    gamesIndex.clear();
+    gamesCache.forEach((game) => {
+      gamesIndex.set(game.id, game);
+    });
 
-  dom.gamesStatus.textContent = '';
-  data.forEach((game) => dom.gamesGrid.appendChild(createGameCard(game)));
+    if (!gamesCache.length) {
+      dom.gamesStatus.textContent = 'Nenhum jogo cadastrado ainda.';
+    } else {
+      dom.gamesStatus.textContent = '';
+    }
+
+    renderGames(gamesCache);
+    return gamesCache;
+  })();
+
+  const result = await gamesLoadingPromise;
+  gamesLoadingPromise = null;
+  return result;
+}
+
+function renderGames(games) {
+  if (!dom.gamesGrid) return;
+  dom.gamesGrid.innerHTML = '';
+  const fragment = document.createDocumentFragment();
+  games.forEach((game) => fragment.appendChild(createGameCard(game)));
+  dom.gamesGrid.appendChild(fragment);
 }
 
 function createGameCard(game) {
-  const card = document.createElement('div');
+  const card = document.createElement('article');
   card.className = 'game-card';
 
   const title = document.createElement('h3');
@@ -225,10 +272,20 @@ async function loadUserData() {
   await Promise.all([loadLicenses(), loadPayments()]);
 }
 
+async function ensureGamesIndex() {
+  if (gamesCache.length === 0) {
+    await loadGames();
+  } else if (gamesLoadingPromise) {
+    await gamesLoadingPromise;
+  }
+}
+
 async function loadLicenses() {
   if (!currentSession?.user) return;
   dom.licensesStatus.textContent = 'Carregando seus jogos...';
   dom.licensesList.innerHTML = '';
+
+  await ensureGamesIndex();
 
   const { data, error } = await supabase
     .from('user_game_access')
@@ -251,8 +308,20 @@ async function loadLicenses() {
   const fragments = document.createDocumentFragment();
   data.forEach((item) => {
     const li = document.createElement('li');
+
     const details = document.createElement('div');
-    details.innerHTML = `<strong>${item.game_id}</strong><br />Expira em: ${formatDate(item.expiration_date)}`;
+    details.className = 'library-item__details';
+
+    const title = document.createElement('strong');
+    const gameName = gamesIndex.get(item.game_id)?.name || 'Jogo desconhecido';
+    title.textContent = gameName;
+
+    const meta = document.createElement('span');
+    meta.className = 'library-item__meta';
+    meta.textContent = `Licença expira em ${formatDate(item.expiration_date)}`;
+
+    details.appendChild(title);
+    details.appendChild(meta);
 
     const badge = document.createElement('span');
     badge.textContent = item.is_active ? 'Ativo' : 'Inativo';
@@ -270,6 +339,8 @@ async function loadPayments() {
   if (!currentSession?.user) return;
   dom.paymentsStatus.textContent = 'Carregando histórico...';
   dom.paymentsBody.innerHTML = '';
+
+  await ensureGamesIndex();
 
   const { data, error } = await supabase
     .from('payment_history')
@@ -294,13 +365,13 @@ async function loadPayments() {
     const tr = document.createElement('tr');
 
     const gameCell = document.createElement('td');
-    gameCell.textContent = payment.game_id;
+    gameCell.textContent = gamesIndex.get(payment.game_id)?.name || 'Jogo desconhecido';
 
     const amountCell = document.createElement('td');
     amountCell.textContent = formatCurrency(payment.amount_cents, payment.currency);
 
     const statusCell = document.createElement('td');
-    statusCell.textContent = payment.payment_status || 'desconhecido';
+    statusCell.textContent = formatStatus(payment.payment_status);
 
     const dateCell = document.createElement('td');
     dateCell.textContent = formatDate(payment.created_at);
@@ -335,6 +406,11 @@ function formatDate(dateString) {
     month: 'short',
     year: 'numeric'
   });
+}
+
+function formatStatus(status) {
+  if (!status) return 'desconhecido';
+  return status.replace(/_/g, ' ');
 }
 
 function setFormDisabled(form, disabled) {
