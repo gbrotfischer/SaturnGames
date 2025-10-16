@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Saturn Games Portal para Streamers</title>
+    <title>Saturn Games &mdash; Jogos interativos para lives TikTok</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -16,54 +16,27 @@
     <script type="module" src="/app.js" defer></script>
   </head>
   <body data-page="home">
-    <div class="app-shell">
-      <aside class="sidebar">
-        <div class="sidebar__logo">
-          <span class="sidebar__logo-mark">🪐</span>
-          <span class="sidebar__logo-text">Saturn Games</span>
+    <header class="site-header">
+      <div class="promo-banner">
+        <div class="container promo-banner__inner">
+          <p>Garanta 45% OFF no primeiro bundle exclusivo para criadores TikTok.</p>
+          <a class="promo-banner__cta" href="/store.html">Aproveitar agora</a>
         </div>
-        <nav class="sidebar__nav" aria-label="Principal">
-          <a class="nav-item" data-page-link="home" href="/">
-            <span class="nav-icon">🏠</span>
-            <span>Visão geral</span>
+      </div>
+      <div class="navbar">
+        <div class="container navbar__inner">
+          <a class="brand" href="/">
+            <span class="brand__mark">🪐</span>
+            <span class="brand__text">Saturn Games</span>
           </a>
-          <a class="nav-item" data-page-link="store" href="/store.html">
-            <span class="nav-icon">🛒</span>
-            <span>Loja</span>
-          </a>
-          <a class="nav-item" data-page-link="library" href="/library.html">
-            <span class="nav-icon">🎮</span>
-            <span>Biblioteca</span>
-          </a>
-          <a class="nav-item" data-page-link="payments" href="/payments.html">
-            <span class="nav-icon">💳</span>
-            <span>Pagamentos</span>
-          </a>
-          <a class="nav-item" data-page-link="engine" href="/engine.html">
-            <span class="nav-icon">📡</span>
-            <span>Motor de escuta</span>
-          </a>
-        </nav>
-        <div class="sidebar__cta">
-          <h2>Plataforma confiável</h2>
-          <p>
-            Jogos originais para streamers que priorizam segurança, suporte dedicado e
-            performance estável para lives de alto impacto.
-          </p>
-          <a class="button button--ghost" href="/store.html">Abrir loja</a>
-        </div>
-        <div class="sidebar__footer">
-          <p>&copy; <span data-year></span> Saturn Games</p>
-        </div>
-      </aside>
-
-      <main class="main">
-        <header class="topbar">
-          <div class="topbar__title">
-            <p class="topbar__subtitle">Portal oficial para criadores ao vivo</p>
-            <h1>Bem-vindo ao Saturn Games</h1>
-          </div>
-          <div class="topbar__actions">
+          <nav class="navbar__nav" aria-label="Principal">
+            <a class="navbar__link" data-page-link="home" href="/">Home</a>
+            <a class="navbar__link" data-page-link="store" href="/store.html">Loja</a>
+            <a class="navbar__link" data-page-link="library" href="/library.html">Biblioteca</a>
+            <a class="navbar__link" data-page-link="payments" href="/payments.html">Pagamentos</a>
+            <a class="navbar__link" data-page-link="engine" href="/engine.html">Motor</a>
+          </nav>
+          <div class="navbar__actions">
             <button class="button button--ghost" id="signout" type="button" hidden>Sair</button>
             <button
               class="avatar-button"
@@ -75,193 +48,199 @@
               <span class="avatar-button__icon" data-avatar-initial>👤</span>
             </button>
           </div>
-        </header>
+        </div>
+      </div>
+    </header>
 
-        <section class="hero hero--cover" style="--hero-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1400&q=80');">
-          <div class="hero__badge">Feito para lives TikTok</div>
-          <div class="hero__content hero__content--split">
-            <div class="hero__text">
-              <h2>Jogos originais desenhados para engajar sua audiência</h2>
-              <p>
-                Somos o hub oficial onde streamers profissionais encontram experiências criadas
-                para maximizar interação, monetização e retenção em lives TikTok. Licenças
-                transparentes, suporte humano e integrações confiáveis.
-              </p>
-              <div class="hero__actions">
-                <a class="button button--primary" href="/store.html">Explorar catálogo</a>
-                <a class="button button--ghost" href="/engine.html">Conhecer o motor de escuta</a>
+    <main class="home">
+      <section class="home-hero">
+        <div class="container home-hero__inner">
+          <div class="home-hero__content">
+            <p class="eyebrow">Mais de 1.500 streamers confiando</p>
+            <h1>Os melhores jogos interativos para lives TikTok</h1>
+            <p class="home-hero__lead">
+              Nossa equipe cria experiências originais que aumentam a interação e a receita da sua
+              comunidade durante qualquer live. Licenças claras, suporte humano e entrega imediata
+              após a compra.
+            </p>
+            <div class="home-hero__actions">
+              <a class="button button--primary" href="/store.html">Descobrir jogos</a>
+              <button class="button button--ghost" type="button" data-open-account>
+                Acessar minha conta
+              </button>
+            </div>
+            <dl class="home-hero__stats">
+              <div>
+                <dt>Jogos disponíveis</dt>
+                <dd id="home-games-count">&mdash;</dd>
               </div>
-            </div>
-            <div class="hero__panel">
-              <article class="security-card">
-                <h3>Confiança no centro</h3>
-                <ul>
-                  <li>Checkout seguro com Stripe e monitoramento antifraude.</li>
-                  <li>Licenças renovadas automaticamente a cada compra confirmada.</li>
-                  <li>Integração nativa com Supabase para autenticação e dados.</li>
-                </ul>
-                <p class="security-card__footnote">
-                  Cada transação gera comprovante e histórico detalhado dentro do portal.
-                </p>
-              </article>
-            </div>
+              <div>
+                <dt>Integração antifraude</dt>
+                <dd>Stripe + Supabase</dd>
+              </div>
+              <div>
+                <dt>Suporte dedicado</dt>
+                <dd>24/7 para criadores</dd>
+              </div>
+            </dl>
           </div>
-        </section>
+          <div class="home-hero__art" role="presentation">
+            <img
+              src="https://images.unsplash.com/photo-1635247220468-60d06a9ae5dd?auto=format&fit=crop&w=900&q=80"
+              alt="Mascote estilizado segurando controle de videogame"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </section>
 
-        <section class="panel">
-          <header class="panel__header">
+      <section class="home-section home-favorites">
+        <div class="container">
+          <header class="section-header">
             <div>
-              <h2>Por que os streamers escolhem a Saturn?</h2>
-              <p class="panel__subtitle">
-                Sua live merece ferramentas que reforçam segurança e ampliam o alcance da comunidade.
+              <p class="eyebrow">Seu catálogo confiável</p>
+              <h2>Os jogos favoritos da nossa comunidade</h2>
+              <p class="section-lead">
+                Selecionamos os títulos mais comprados pelos streamers para maximizar interações na
+                TikTok LIVE. Cada licença renovada adiciona +1 mês de acesso.
               </p>
             </div>
+            <a class="link" href="/store.html">Ver catálogo completo</a>
           </header>
-          <div class="feature-grid">
-            <article class="feature-card">
-              <img
-                src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=900&q=80"
-                alt="Streamer interagindo com o chat"
-              />
-              <div class="feature-card__body">
-                <h3>Engajamento imediato</h3>
-                <p>
-                  Jogos projetados para responder em tempo real aos eventos do chat, incluindo gifts,
-                  comentários e desafios.
-                </p>
-              </div>
-            </article>
-            <article class="feature-card">
-              <img
-                src="https://images.unsplash.com/photo-1511517006433-842c25d113e0?auto=format&fit=crop&w=900&q=80"
-                alt="Dashboard profissional"
-              />
-              <div class="feature-card__body">
-                <h3>Controles profissionais</h3>
-                <p>
-                  Painéis intuitivos para ativar eventos, ajustar dificuldade e monitorar métricas sem
-                  interromper a transmissão.
-                </p>
-              </div>
-            </article>
-            <article class="feature-card">
-              <img
-                src="https://images.unsplash.com/photo-1526498460520-4c246339dccb?auto=format&fit=crop&w=900&q=80"
-                alt="Teclado gamer iluminado"
-              />
-              <div class="feature-card__body">
-                <h3>Infraestrutura segura</h3>
-                <p>
-                  Dados protegidos com Supabase e políticas de acesso precisas. Transparência em cada
-                  licença emitida.
-                </p>
-              </div>
-            </article>
-          </div>
-        </section>
+          <div class="home-favorites__grid" id="home-favorites" aria-live="polite"></div>
+          <p class="section-status" id="home-favorites-status"></p>
+        </div>
+      </section>
 
-        <section class="panel">
-          <header class="panel__header">
-            <div>
-              <h2>Experiências destaque</h2>
-              <p class="panel__subtitle">
-                Conteúdos originais que potencializam lives interativas. Disponíveis agora na loja.
-              </p>
-            </div>
-            <a class="link" href="/store.html">Abrir loja</a>
-          </header>
-          <div class="spotlight-grid">
-            <article class="spotlight-card">
-              <div
-                class="spotlight-card__media"
-                style="background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80');"
-              ></div>
-              <div class="spotlight-card__body">
-                <h3>Neon Arena</h3>
-                <p>
-                  Batalhas cooperativas em tempo real onde a torcida envia boosts e sabotagens via
-                  chat. Ideal para eventos especiais.
-                </p>
-              </div>
-            </article>
-            <article class="spotlight-card">
-              <div
-                class="spotlight-card__media"
-                style="background-image: url('https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80');"
-              ></div>
-              <div class="spotlight-card__body">
-                <h3>Orbital Rush</h3>
-                <p>
-                  Corrida espacial que recompensa espectadores engajados com escolhas que mudam o
-                  destino da nave ao vivo.
-                </p>
-              </div>
-            </article>
-            <article class="spotlight-card">
-              <div
-                class="spotlight-card__media"
-                style="background-image: url('https://images.unsplash.com/photo-1516117172878-fd2c41f4a759?auto=format&fit=crop&w=1200&q=80');"
-              ></div>
-              <div class="spotlight-card__body">
-                <h3>Pulse Labyrinth</h3>
-                <p>
-                  Quebra-cabeças cooperativos sincronizados com batidas musicais. Cada doação abre
-                  novas rotas e eventos exclusivos.
-                </p>
-              </div>
-            </article>
-          </div>
-        </section>
-
-        <section class="panel panel--gradient">
-          <div class="panel__header">
-            <div>
-              <h2>Novidades em breve</h2>
-              <p class="panel__subtitle">
-                Estamos expandindo o catálogo com experiências pensadas para o público TikTok.
-              </p>
-            </div>
-          </div>
-          <div class="coming-soon">
-            <article class="coming-card">
-              <h3>ForgeCast Studio</h3>
-              <p>
-                Ferramentas para criar missões patrocinadas ao vivo, com rotas programáveis e
-                recompensas para a audiência.
-              </p>
-            </article>
-            <article class="coming-card">
-              <h3>LiveSync Battles</h3>
-              <p>
-                Combates assimétricos em que o chat escolhe habilidades, bosses e eventos de risco em
-                tempo real.
-              </p>
-            </article>
-            <article class="coming-card">
-              <h3>Atlas Vox</h3>
-              <p>
-                Narrativas interativas baseadas em voz, onde palavras-chave da live desbloqueiam
-                capítulos secretos durante a transmissão.
-              </p>
-            </article>
-          </div>
-        </section>
-
-        <section class="cta-panel">
-          <div class="cta-panel__content">
-            <h2>Pronto para elevar sua live?</h2>
+      <section class="home-section home-bundle">
+        <div class="container home-bundle__inner">
+          <div class="home-bundle__copy">
+            <p class="eyebrow">Economize 45%</p>
+            <h2>Um bundle, uma jornada completa</h2>
             <p>
-              Garanta jogos originais com licenciamento mensal simples, suporte rápido e relatórios de
-              desempenho consolidados.
+              Adquira o combo Saturn Creator Pack com quatro experiências exclusivas. Licença vitalícia
+              para usar em qualquer live TikTok, com atualizações inclusas.
+            </p>
+            <a class="button button--primary" href="/store.html">Garantir o bundle</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="home-section home-benefits">
+        <div class="container">
+          <header class="section-header">
+            <div>
+              <p class="eyebrow">Por que escolher a Saturn</p>
+              <h2>Transparência, segurança e performance em cada live</h2>
+            </div>
+          </header>
+          <div class="home-benefits__grid">
+            <article class="benefit-card">
+              <img
+                src="https://images.unsplash.com/photo-1618005198919-d3d4b5a92eee?auto=format&fit=crop&w=400&q=80"
+                alt="Streamer sorrindo durante transmissão"
+              />
+              <h3>Aumente receita e audiência</h3>
+              <p>
+                Eventos dinâmicos que respondem a gifts, comentários e desafios instantaneamente para
+                manter o chat ativo.
+              </p>
+            </article>
+            <article class="benefit-card">
+              <img
+                src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80"
+                alt="Interface profissional com dashboards"
+              />
+              <h3>Fácil de configurar e usar</h3>
+              <p>
+                Plug-and-play com guias visuais, atualizações contínuas e time de suporte dedicado aos
+                criadores.
+              </p>
+            </article>
+            <article class="benefit-card">
+              <img
+                src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=400&q=80"
+                alt="Detalhe de teclado gamer iluminado"
+              />
+              <h3>Licenças vitalícias e seguras</h3>
+              <p>
+                Toda compra gera histórico rastreável no Supabase, com Stripe protegendo contra fraudes e
+                chargebacks.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="home-section home-discover">
+        <div class="container">
+          <header class="section-header">
+            <div>
+              <p class="eyebrow">Descubra</p>
+              <h2>Jogos e ferramentas feitas para lives interativas</h2>
+            </div>
+          </header>
+          <div class="home-discover__grid">
+            <article class="discover-card discover-card--games">
+              <div class="discover-card__overlay"></div>
+              <div class="discover-card__content">
+                <h3>Jogos interativos</h3>
+                <p>
+                  Catálogo crescente com experiências originais que convertem espectadores em fãs
+                  fiéis.
+                </p>
+                <a class="link" href="/store.html">Explorar jogos</a>
+              </div>
+            </article>
+            <article class="discover-card discover-card--tools">
+              <div class="discover-card__overlay"></div>
+              <div class="discover-card__content">
+                <h3>Ferramentas interativas</h3>
+                <p>
+                  Automação de desafios, metas ao vivo e respostas visuais alimentadas pelo nosso motor
+                  de escuta.
+                </p>
+                <a class="link" href="/engine.html">Conhecer o motor</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="home-section home-community">
+        <div class="container home-community__inner">
+          <div>
+            <p class="eyebrow">Junte-se à comunidade</p>
+            <h2>Participe do nosso servidor no Discord</h2>
+            <p>
+              Receba novidades em primeira mão, participe de playtests privados e colabore com outros
+              streamers profissionais.
             </p>
           </div>
-          <div class="cta-panel__actions">
-            <a class="button button--primary" href="/store.html">Comprar licenças</a>
-            <button class="button button--ghost" type="button" data-open-account>Entrar na minha conta</button>
-          </div>
-        </section>
-      </main>
-    </div>
+          <a class="button button--primary" href="https://discord.com" target="_blank" rel="noreferrer"
+            >Entrar no Discord</a
+          >
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container site-footer__inner">
+        <div class="site-footer__brand">
+          <span class="brand__mark">🪐</span>
+          <span class="brand__text">Saturn Games</span>
+        </div>
+        <div class="site-footer__meta">
+          <p>© <span data-year></span> Saturn Games Studio · Todos os direitos reservados.</p>
+          <nav aria-label="Links institucionais">
+            <a href="/store.html">Loja</a>
+            <a href="/payments.html">Histórico</a>
+            <a href="/engine.html">Motor</a>
+            <a href="mailto:suporte@saturn.games">Contato</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
 
     <div id="global-status" class="global-status" role="status" hidden></div>
 

@@ -37,6 +37,9 @@ const dom = {
   accountOpeners: document.querySelectorAll('[data-open-account]'),
   gamesGrid: document.getElementById('games-grid'),
   gamesStatus: document.getElementById('games-status'),
+  homeFavorites: document.getElementById('home-favorites'),
+  homeFavoritesStatus: document.getElementById('home-favorites-status'),
+  homeGamesCount: document.getElementById('home-games-count'),
   licensesList: document.getElementById('licenses-list'),
   licensesStatus: document.getElementById('licenses-status'),
   libraryAuthPrompt: document.getElementById('library-auth-prompt'),
@@ -63,6 +66,8 @@ if (supabase) {
 
 if (page === 'store') {
   loadGames();
+} else if (page === 'home') {
+  initHomePage();
 }
 
 function setActiveNav() {
@@ -292,6 +297,45 @@ function renderGames(games) {
   dom.gamesGrid.appendChild(fragment);
 }
 
+async function initHomePage() {
+  if (dom.homeFavoritesStatus) {
+    dom.homeFavoritesStatus.textContent = supabase
+      ? 'Carregando catálogo...'
+      : 'Configure o Supabase para exibir os jogos disponíveis.';
+  }
+
+  if (!supabase) {
+    if (dom.homeGamesCount) dom.homeGamesCount.textContent = '0';
+    return;
+  }
+
+  const games = await loadGames();
+
+  if (dom.homeGamesCount) {
+    dom.homeGamesCount.textContent = games.length.toString();
+  }
+
+  if (!dom.homeFavorites) return;
+
+  if (!games.length) {
+    if (dom.homeFavoritesStatus) {
+      dom.homeFavoritesStatus.textContent = 'Nenhum jogo cadastrado ainda.';
+    }
+    dom.homeFavorites.innerHTML = '';
+    return;
+  }
+
+  if (dom.homeFavoritesStatus) {
+    dom.homeFavoritesStatus.textContent = '';
+  }
+
+  const favorites = games.slice(0, 4);
+  dom.homeFavorites.innerHTML = '';
+  const fragment = document.createDocumentFragment();
+  favorites.forEach((game) => fragment.appendChild(createHomeFavoriteCard(game)));
+  dom.homeFavorites.appendChild(fragment);
+}
+
 const fallbackArt = [
   'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80',
   'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80',
@@ -344,6 +388,46 @@ function createGameCard(game) {
 
   card.appendChild(art);
   card.appendChild(body);
+  return card;
+}
+
+function createHomeFavoriteCard(game) {
+  const card = document.createElement('article');
+  card.className = 'home-favorite-card';
+
+  const art = document.createElement('div');
+  art.className = 'home-favorite-card__art';
+  art.style.setProperty('--game-art', `url('${getGameArt(game.id)}')`);
+
+  const body = document.createElement('div');
+  body.className = 'home-favorite-card__body';
+
+  const title = document.createElement('h3');
+  title.className = 'home-favorite-card__title';
+  title.textContent = game.name;
+
+  const price = document.createElement('p');
+  price.className = 'home-favorite-card__price';
+  price.textContent = formatCurrency(game.price_cents, game.currency);
+
+  const meta = document.createElement('p');
+  meta.className = 'home-favorite-card__meta';
+  meta.textContent = 'Licença +1 mês por compra confirmada.';
+
+  const action = document.createElement('button');
+  action.className = 'button button--primary';
+  action.type = 'button';
+  action.textContent = 'Comprar agora';
+  action.addEventListener('click', () => initiateCheckout(game.id));
+
+  body.appendChild(title);
+  body.appendChild(meta);
+  body.appendChild(price);
+  body.appendChild(action);
+
+  card.appendChild(art);
+  card.appendChild(body);
+
   return card;
 }
 
