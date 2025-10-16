@@ -1,6 +1,6 @@
 # SaturnGames
 
-Portal web para gerenciamento de assinaturas de jogos construído com HTML, CSS e JavaScript puro. Ele integra Supabase para autenticação, catálogo de jogos, licenças e histórico de pagamentos, além de Stripe Checkout para concluir compras com pagamento seguro.
+Portal web para gerenciamento de assinaturas de jogos construído com HTML, CSS e JavaScript puro. Ele integra Supabase para autenticação, catálogo de jogos, licenças e histórico de pagamentos, além de Stripe Checkout para concluir compras com pagamento seguro. O projeto compila para arquivos estáticos (`dist/`) e expõe funções serverless compatíveis com Cloudflare Pages para criar sessões de checkout e processar webhooks do Stripe.
 
 ## Pré-requisitos
 
@@ -24,17 +24,18 @@ STRIPE_WEBHOOK_SECRET=whsec_xxx
 ```
 
 > **Importante:**
-> - A chave `SUPABASE_SERVICE_ROLE_KEY` e as chaves secretas do Stripe **jamais** devem ser expostas no frontend. Elas são utilizadas apenas pelo `server.js` para processar webhooks e criar sessões de checkout.
-> - `BASE_URL` deve apontar para o domínio público acessível pelo Stripe para redirecionar o usuário após o pagamento.
+> - A chave `SUPABASE_SERVICE_ROLE_KEY` e as chaves secretas do Stripe **jamais** devem ser expostas no frontend. Elas são utilizadas apenas pelas funções serverless (`functions/`) ou pelo `server.js` local para processar webhooks e criar sessões de checkout.
+> - `BASE_URL` é opcional; quando ausente, o domínio do próprio request é usado para montar as URLs de retorno do Stripe.
 
 ## Executando localmente
 
 ```bash
-npm install # não há dependências externas, o comando é opcional
-npm run start
+npm install
+npm run build        # gera dist/ com os assets prontos para deploy
+npm run start        # opcional para rodar o servidor Node local
 ```
 
-O servidor iniciará em `http://localhost:3000` e servirá os arquivos estáticos da pasta `public/`. Ele também expõe os seguintes endpoints:
+O servidor local iniciará em `http://localhost:3000`, servindo os arquivos de `public/` e expondo os mesmos endpoints utilizados em produção (útil para integração com o Stripe CLI):
 
 - `GET /env.js`: entrega as configurações públicas (Supabase anon e chave pública do Stripe) para o frontend.
 - `POST /api/create-checkout-session`: cria uma sessão de checkout do Stripe validando o usuário com Supabase.
@@ -61,16 +62,30 @@ stripe listen --forward-to localhost:3000/webhook
 
 Cadastre o endpoint público correspondente no painel do Stripe e copie o `STRIPE_WEBHOOK_SECRET` informado.
 
+## Deploy no Cloudflare Pages
+
+1. **Build command:** `npm run build`
+2. **Build output directory:** `dist`
+3. **Functions:** mantenha habilitado o suporte a Functions (a pasta `functions/` já está no repositório).
+4. **Variáveis de ambiente:** configure todas as chaves do `.env` diretamente nas configurações do projeto no Cloudflare Pages. O processo de build gera `dist/env.js` com as variáveis públicas e as funções utilizam as variáveis secretas em tempo de execução.
+5. **Stripe webhook:** use o domínio do Pages (`https://<seu-projeto>.pages.dev/webhook`) ou seu domínio customizado para registrar o webhook `checkout.session.completed` no Stripe.
+
+> Caso precise rodar o projeto no modo “Preview”, o comando `npm run build` finaliza imediatamente e evita que o job fique pendurado aguardando `npm run start`.
+
 ## Estrutura de pastas
 
 ```
 .
+├── functions/        # Funções serverless compatíveis com Cloudflare Pages
+│   ├── api/create-checkout-session.js  # Cria sessões de checkout do Stripe
+│   └── webhook.js                      # Processa webhooks checkout.session.completed
 ├── public/
 │   ├── app.js          # Lógica do frontend: Supabase Auth, catálogo, checkout, licenças e pagamentos
 │   ├── index.html      # Página principal do portal Saturn Games
 │   ├── styles.css      # Estilos globais com visual futurista/neon
 │   └── success.html    # Página exibida após retorno do Stripe
-├── server.js           # Servidor HTTP + integração Stripe/Supabase
+├── scripts/build.js    # Copia public/ para dist/ e gera env.js com variáveis públicas
+├── server.js           # Servidor HTTP opcional para desenvolvimento local
 ├── package.json
 └── README.md
 ```
