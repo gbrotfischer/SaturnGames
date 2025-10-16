@@ -6,11 +6,15 @@ const ROOT = path.resolve(__dirname, '..');
 const PUBLIC_DIR = path.join(ROOT, 'public');
 const DIST_DIR = path.join(ROOT, 'dist');
 
+const assetVersion =
+  process.env.ASSET_VERSION || process.env.CF_PAGES_COMMIT_SHA || Date.now().toString(36);
+
 async function main() {
   await cleanDir(DIST_DIR);
   await copyDir(PUBLIC_DIR, DIST_DIR);
   await writeClientEnv();
-  console.log('Build completed. Output in dist/.');
+  await applyCacheBusting(assetVersion);
+  console.log(`Build completed. Output in dist/. (asset version: ${assetVersion})`);
 }
 
 async function cleanDir(dir) {
@@ -43,6 +47,40 @@ async function writeClientEnv() {
   const file = path.join(DIST_DIR, 'env.js');
   const contents = `window.__ENV = ${JSON.stringify(clientEnv)};\n`;
   await fsp.writeFile(file, contents, 'utf8');
+}
+
+async function applyCacheBusting(version) {
+  const htmlFiles = await collectHtmlFiles(DIST_DIR);
+  await Promise.all(
+    htmlFiles.map(async (file) => {
+      let contents = await fsp.readFile(file, 'utf8');
+      contents = contents
+        .replace(/href="\/styles\.css"/g, `href="/styles.css?v=${version}"`)
+        .replace(/href="styles\.css"/g, `href="styles.css?v=${version}"`)
+        .replace(/src="\/app\.js"/g, `src="/app.js?v=${version}"`)
+        .replace(/src="app\.js"/g, `src="app.js?v=${version}"`)
+        .replace(/src="\/env\.js"/g, `src="/env.js?v=${version}"`)
+        .replace(/src="env\.js"/g, `src="env.js?v=${version}"`);
+      await fsp.writeFile(file, contents, 'utf8');
+    })
+  );
+}
+
+async function collectHtmlFiles(dir) {
+  const entries = await fsp.readdir(dir, { withFileTypes: true });
+  const files = await Promise.all(
+    entries.map((entry) => {
+      const entryPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        return collectHtmlFiles(entryPath);
+      }
+      if (entry.isFile() && entry.name.endsWith('.html')) {
+        return entryPath;
+      }
+      return [];
+    })
+  );
+  return files.flat();
 }
 
 main().catch((error) => {
