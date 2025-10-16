@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pagamento concluído - Saturn Games</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/env.js" defer></script>
+    <script type="module">
+      const backLink = document.getElementById('back-home');
+      backLink?.addEventListener('click', () => {
+        window.location.href = '/';
+      });
+    </script>
+  </head>
+  <body>
+    <main class="container" style="padding: 4rem 0;">
+      <section class="card" style="text-align: center;">
+        <h1>Obrigado pela compra! 🎮</h1>
+        <p>O Stripe está processando o seu pagamento. Assim que a confirmação chegar, liberaremos o acesso ao jogo automaticamente.</p>
+        <button id="back-home" class="button button--primary" type="button">Voltar ao portal</button>
+        <p class="helper" style="margin-top: 1.5rem;">Caso a licença não apareça imediatamente, aguarde alguns segundos e recarregue a página inicial.</p>
+      </section>
+    </main>
+  </body>
+</html>
