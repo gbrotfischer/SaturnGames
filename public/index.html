@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saturn Games &mdash; Jogos interativos para lives TikTok</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="/env.js" defer></script>
+    <script type="module" src="/app.js" defer></script>
+  </head>
+  <body data-page="home">
+    <header class="site-header">
+      <div class="promo-banner">
+        <div class="container promo-banner__inner">
+          <p>Plataforma oficial com checkout Stripe e Supabase monitorando cada licença em tempo real.</p>
+          <a class="promo-banner__cta" href="/games.html">Conhecer jogos</a>
+        </div>
+      </div>
+      <div class="navbar">
+        <div class="container navbar__inner">
+          <a class="brand" href="/">
+            <span class="brand__mark">🪐</span>
+            <span class="brand__text">Saturn Games</span>
+          </a>
+          <nav class="navbar__nav" aria-label="Principal">
+            <a class="navbar__link" data-page-link="home" href="/">Home</a>
+            <a class="navbar__link" data-page-link="games" href="/games.html">Jogos</a>
+            <a class="navbar__link" data-page-link="engine" href="/#motor">Motor</a>
+          </nav>
+          <div class="navbar__actions">
+            <button class="button button--ghost" id="signout" type="button" hidden>Sair</button>
+            <button
+              class="avatar-button"
+              id="account-toggle"
+              type="button"
+              aria-haspopup="dialog"
+              aria-expanded="false"
+            >
+              <span class="avatar-button__icon" data-avatar-initial>👤</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="home">
+      <section class="home-hero">
+        <div class="container home-hero__inner">
+          <div class="home-hero__content">
+            <p class="eyebrow">Mais de 1.500 streamers confiando</p>
+            <h1>Os melhores jogos interativos para lives TikTok</h1>
+            <p class="home-hero__lead">
+              Nossa equipe cria experiências originais que aumentam a interação e a receita da sua
+              comunidade durante qualquer live. Licenças claras, suporte humano e entrega imediata
+              após a compra.
+            </p>
+            <div class="home-hero__actions">
+              <a class="button button--primary" href="/games.html">Descobrir jogos</a>
+              <button class="button button--ghost" type="button" data-open-account>
+                Acessar minha conta
+              </button>
+            </div>
+            <dl class="home-hero__stats">
+              <div>
+                <dt>Jogos disponíveis</dt>
+                <dd id="home-games-count">&mdash;</dd>
+              </div>
+              <div>
+                <dt>Integração antifraude</dt>
+                <dd>Stripe + Supabase</dd>
+              </div>
+              <div>
+                <dt>Suporte dedicado</dt>
+                <dd>24/7 para criadores</dd>
+              </div>
+            </dl>
+          </div>
+          <div class="home-hero__art" role="presentation">
+            <img
+              src="https://images.unsplash.com/photo-1635247220468-60d06a9ae5dd?auto=format&fit=crop&w=900&q=80"
+              alt="Mascote estilizado segurando controle de videogame"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section class="home-section home-favorites">
+        <div class="container">
+          <header class="section-header">
+            <div>
+              <p class="eyebrow">Seu catálogo confiável</p>
+              <h2>Os jogos favoritos da nossa comunidade</h2>
+              <p class="section-lead">
+                Selecionamos os títulos mais comprados pelos streamers para maximizar interações na
+                TikTok LIVE. Cada licença renovada adiciona +1 mês de acesso.
+              </p>
+            </div>
+            <a class="link" href="/games.html">Ver catálogo completo</a>
+          </header>
+          <div class="home-favorites__grid" id="home-favorites" aria-live="polite"></div>
+          <p class="section-status" id="home-favorites-status"></p>
+        </div>
+      </section>
+
+      <section class="home-section home-bundle">
+        <div class="container home-bundle__inner">
+          <div class="home-bundle__copy">
+            <p class="eyebrow">Confiança para streamers profissionais</p>
+            <h2>Licenciamento transparente e suporte dedicado</h2>
+            <p>
+              Assine títulos com contrato claro, auditoria contínua e integração nativa ao Motor de Escuta
+              Saturn. Nosso time garante onboarding assistido e atualizações frequentes sem custo extra.
+            </p>
+            <a class="button button--primary" href="/#motor">Falar com um especialista</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="home-section home-benefits">
+        <div class="container">
+          <header class="section-header">
+            <div>
+              <p class="eyebrow">Por que escolher a Saturn</p>
+              <h2>Transparência, segurança e performance em cada live</h2>
+            </div>
+          </header>
+          <div class="home-benefits__grid">
+            <article class="benefit-card">
+              <img
+                src="https://images.unsplash.com/photo-1618005198919-d3d4b5a92eee?auto=format&fit=crop&w=400&q=80"
+                alt="Streamer sorrindo durante transmissão"
+              />
+              <h3>Aumente receita e audiência</h3>
+              <p>
+                Eventos dinâmicos que respondem a gifts, comentários e desafios instantaneamente para
+                manter o chat ativo.
+              </p>
+            </article>
+            <article class="benefit-card">
+              <img
+                src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80"
+                alt="Interface profissional com dashboards"
+              />
+              <h3>Fácil de configurar e usar</h3>
+              <p>
+                Plug-and-play com guias visuais, atualizações contínuas e time de suporte dedicado aos
+                criadores.
+              </p>
+            </article>
+            <article class="benefit-card">
+              <img
+                src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=400&q=80"
+                alt="Detalhe de teclado gamer iluminado"
+              />
+              <h3>Licenças vitalícias e seguras</h3>
+              <p>
+                Toda compra gera histórico rastreável no Supabase, com Stripe protegendo contra fraudes e
+                chargebacks.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="home-section home-discover" id="motor">
+        <div class="container">
+          <header class="section-header">
+            <div>
+              <p class="eyebrow">Descubra</p>
+              <h2>Jogos e ferramentas feitas para lives interativas</h2>
+            </div>
+          </header>
+          <div class="home-discover__grid">
+            <article class="discover-card discover-card--games">
+              <div class="discover-card__overlay"></div>
+              <div class="discover-card__content">
+                <h3>Jogos interativos</h3>
+                <p>
+                  Catálogo crescente com experiências originais que convertem espectadores em fãs
+                  fiéis.
+                </p>
+                <a class="link" href="/games.html">Explorar jogos</a>
+              </div>
+            </article>
+            <article class="discover-card discover-card--tools">
+              <div class="discover-card__overlay"></div>
+              <div class="discover-card__content">
+                <h3>Ferramentas interativas</h3>
+                <p>
+                  Automação de desafios, metas ao vivo e respostas visuais alimentadas pelo nosso motor
+                  de escuta.
+                </p>
+                <a class="link" href="/#motor">Conhecer o motor</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="home-section home-community">
+        <div class="container home-community__inner">
+          <div>
+            <p class="eyebrow">Junte-se à comunidade</p>
+            <h2>Participe do nosso servidor no Discord</h2>
+            <p>
+              Receba novidades em primeira mão, participe de playtests privados e colabore com outros
+              streamers profissionais.
+            </p>
+          </div>
+          <a class="button button--primary" href="https://discord.com" target="_blank" rel="noreferrer"
+            >Entrar no Discord</a
+          >
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container site-footer__inner">
+        <div class="site-footer__brand">
+          <span class="brand__mark">🪐</span>
+          <span class="brand__text">Saturn Games</span>
+        </div>
+        <div class="site-footer__meta">
+          <p>© <span data-year></span> Saturn Games Studio · Todos os direitos reservados.</p>
+          <nav aria-label="Links institucionais">
+            <a href="/games.html">Jogos</a>
+            <a href="/#motor">Motor de escuta</a>
+            <a href="mailto:suporte@saturn.games">Contato</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
+
+    <div id="global-status" class="global-status" role="status" hidden></div>
+
+    <div class="account-drawer" id="account-drawer" aria-hidden="true">
+      <div class="account-drawer__overlay" data-close-account></div>
+      <div class="account-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="account-drawer-title">
+        <button class="account-drawer__close" id="account-close" type="button" aria-label="Fechar painel">
+          ✕
+        </button>
+        <div class="account-drawer__content">
+          <header class="account-drawer__header">
+            <p class="account-drawer__eyebrow">Acesso seguro</p>
+            <h2 id="account-drawer-title">Sua conta Saturn Games</h2>
+            <p class="account-drawer__subtitle">
+              Entre ou cadastre-se para acompanhar licenças, pagamentos e histórico de uso.
+            </p>
+          </header>
+          <section id="account-summary" class="account-summary" hidden>
+            <div class="account-summary__header">
+              <div class="account-summary__avatar" aria-hidden="true">
+                <span data-avatar-preview>👤</span>
+              </div>
+              <div class="account-summary__details">
+                <h3 id="account-name"></h3>
+                <ul class="account-summary__list">
+                  <li>
+                    <span class="account-summary__label">Email</span>
+                    <span class="account-summary__value" id="account-email"></span>
+                  </li>
+                  <li>
+                    <span class="account-summary__label">ID do usuário</span>
+                    <span class="account-summary__value" id="session-status"></span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <section class="account-section" id="account-licenses" data-profile-section="licenses">
+              <header class="account-section__head">
+                <h3>Licenças ativas</h3>
+                <p>Monitoramos cada título para avisar sobre renovações com antecedência.</p>
+              </header>
+              <p class="account-section__status" id="licenses-status"></p>
+              <ul id="licenses-list" class="library-list"></ul>
+            </section>
+            <section class="account-section" id="account-payments" data-profile-section="payments">
+              <header class="account-section__head">
+                <h3>Pagamentos recentes</h3>
+                <p>Dados fornecidos pelo Stripe e registrados no Supabase.</p>
+              </header>
+              <p class="account-section__status" id="payments-status"></p>
+              <ul id="payments-list" class="payment-list" aria-live="polite"></ul>
+            </section>
+          </section>
+          <div id="auth-forms" class="account-forms">
+            <div class="auth-tabs" role="tablist" aria-label="Acessar conta">
+              <button
+                class="auth-tab is-active"
+                type="button"
+                role="tab"
+                id="auth-tab-login"
+                data-auth-tab="login"
+                aria-controls="auth-panel-login"
+                aria-selected="true"
+              >
+                Login
+              </button>
+              <button
+                class="auth-tab"
+                type="button"
+                role="tab"
+                id="auth-tab-register"
+                data-auth-tab="register"
+                aria-controls="auth-panel-register"
+                aria-selected="false"
+              >
+                Registrar
+              </button>
+            </div>
+            <div class="auth-panels">
+              <div
+                class="auth-panel"
+                id="auth-panel-login"
+                data-auth-panel="login"
+                role="tabpanel"
+                aria-labelledby="auth-tab-login"
+              >
+                <div class="card auth-card" data-auth-card="login">
+                  <form id="login-form" class="auth-form">
+                    <h3>Entrar</h3>
+                    <label for="login-email">Email</label>
+                    <input id="login-email" name="email" type="email" required autocomplete="email" />
+                    <label for="login-password">Senha</label>
+                    <div class="input-group input-group--password">
+                      <input
+                        id="login-password"
+                        name="password"
+                        type="password"
+                        required
+                        autocomplete="current-password"
+                      />
+                      <button
+                        class="password-toggle"
+                        type="button"
+                        data-password-toggle="login-password"
+                        aria-pressed="false"
+                      >
+                        Mostrar
+                      </button>
+                    </div>
+                    <button class="button" type="submit">Entrar</button>
+                    <button class="button button--ghost" id="magic-link" type="button">Receber link mágico</button>
+                    <p class="helper">Enviaremos um link de acesso instantâneo para seu email.</p>
+                  </form>
+                </div>
+              </div>
+              <div
+                class="auth-panel"
+                id="auth-panel-register"
+                data-auth-panel="register"
+                role="tabpanel"
+                aria-labelledby="auth-tab-register"
+                hidden
+              >
+                <div class="card auth-card auth-card--register" data-auth-card="register">
+                  <div class="auth-card__stage" id="signup-stage">
+                    <form id="signup-form" class="auth-form">
+                      <h3>Criar conta</h3>
+                      <label for="signup-email">Email</label>
+                      <input id="signup-email" name="email" type="email" required autocomplete="email" />
+                      <label for="signup-password">Senha</label>
+                      <div class="input-group input-group--password">
+                        <input
+                          id="signup-password"
+                          name="password"
+                          type="password"
+                          minlength="6"
+                          required
+                          autocomplete="new-password"
+                        />
+                        <button
+                          class="password-toggle"
+                          type="button"
+                          data-password-toggle="signup-password"
+                          aria-pressed="false"
+                        >
+                          Mostrar
+                        </button>
+                      </div>
+                      <label for="signup-confirm">Confirmar senha</label>
+                      <div class="input-group input-group--password">
+                        <input
+                          id="signup-confirm"
+                          name="confirmPassword"
+                          type="password"
+                          minlength="6"
+                          required
+                          autocomplete="new-password"
+                        />
+                        <button
+                          class="password-toggle"
+                          type="button"
+                          data-password-toggle="signup-confirm"
+                          aria-pressed="false"
+                        >
+                          Mostrar
+                        </button>
+                      </div>
+                      <p class="form-error" id="signup-error" hidden>As senhas não correspondem.</p>
+                      <button class="button button--primary" type="submit">Registrar</button>
+                      <p class="helper">Você receberá um email de confirmação enviado pelo Supabase.</p>
+                    </form>
+                  </div>
+                  <div class="auth-card__stage auth-confirmation" id="signup-confirmation" role="alert" hidden>
+                    <div class="auth-confirmation__icon" aria-hidden="true">📬</div>
+                    <h3>Verifique seu email</h3>
+                    <p>
+                      Enviamos um link de confirmação para
+                      <strong id="signup-confirmation-email"></strong>. Confirme para ativar sua conta e liberar o login.
+                    </p>
+                    <button class="button" type="button" data-switch-auth="login">Ir para login</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

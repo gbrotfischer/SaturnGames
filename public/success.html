@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pagamento concluído - Saturn Games</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/env.js" defer></script>
+    <script type="module" src="/app.js" defer></script>
+  </head>
+  <body data-page="success">
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="sidebar__logo">
+          <span class="sidebar__logo-mark">🪐</span>
+          <span class="sidebar__logo-text">Saturn Games</span>
+        </div>
+        <nav class="sidebar__nav" aria-label="Principal">
+          <a class="nav-item" data-page-link="home" href="/">
+            <span class="nav-icon">🏠</span>
+            <span>Visão geral</span>
+          </a>
+          <a class="nav-item" data-page-link="games" href="/games.html">
+            <span class="nav-icon">🛒</span>
+            <span>Jogos</span>
+          </a>
+          <a class="nav-item" data-page-link="engine" href="/#motor">
+            <span class="nav-icon">📡</span>
+            <span>Motor de escuta</span>
+          </a>
+        </nav>
+        <div class="sidebar__cta">
+          <h2>Próximos passos</h2>
+          <p>Enquanto confirmamos seu pagamento, explore o portal e acompanhe suas licenças.</p>
+          <button class="button button--ghost" type="button" data-open-account data-profile-target="licenses">
+            Ver licenças
+          </button>
+        </div>
+        <div class="sidebar__footer">
+          <p>&copy; <span data-year></span> Saturn Games</p>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="topbar__title">
+            <p class="topbar__subtitle">Tudo certo!</p>
+            <h1>Pagamento em processamento</h1>
+          </div>
+          <div class="topbar__actions">
+            <button class="button button--ghost" id="signout" type="button" hidden>Sair</button>
+            <button
+              class="avatar-button"
+              id="account-toggle"
+              type="button"
+              aria-haspopup="dialog"
+              aria-expanded="false"
+            >
+              <span class="avatar-button__icon" data-avatar-initial>👤</span>
+            </button>
+          </div>
+        </header>
+
+        <section class="hero hero--cover" style="--hero-image: url('https://images.unsplash.com/photo-1511517006433-842c25d113e0?auto=format&fit=crop&w=1400&q=80');">
+          <div class="hero__badge">Obrigado pela compra</div>
+          <div class="hero__content">
+            <div class="hero__text">
+              <h2>Estamos confirmando a sua licença</h2>
+              <p>
+                Assim que o Stripe validar a transação, renovaremos o acesso automaticamente no portal.
+                Você receberá um email com os detalhes em instantes.
+              </p>
+              <div class="hero__actions">
+                <button
+                  class="button button--primary"
+                  type="button"
+                  data-open-account
+                  data-profile-target="licenses"
+                >
+                  Ver minhas licenças
+                </button>
+                <button
+                  class="button button--ghost"
+                  type="button"
+                  data-open-account
+                  data-profile-target="payments"
+                >
+                  Conferir pagamentos
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel panel--transparent">
+          <div class="support-card">
+            <h2>Precisa de suporte imediato?</h2>
+            <p>Se o jogo não aparecer após alguns minutos, abra um ticket pelo painel da conta.</p>
+            <button class="button button--ghost" type="button" data-open-account>Abrir painel</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="global-status" class="global-status" role="status" hidden></div>
+
+    <div class="account-drawer" id="account-drawer" aria-hidden="true">
+      <div class="account-drawer__overlay" data-close-account></div>
+      <div class="account-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="account-drawer-title">
+        <button class="account-drawer__close" id="account-close" type="button" aria-label="Fechar painel">
+          ✕
+        </button>
+        <div class="account-drawer__content">
+          <header class="account-drawer__header">
+            <p class="account-drawer__eyebrow">Acesso seguro</p>
+            <h2 id="account-drawer-title">Sua conta Saturn Games</h2>
+            <p class="account-drawer__subtitle">
+              Entre ou cadastre-se para acompanhar licenças, pagamentos e histórico de uso.
+            </p>
+          </header>
+          <section id="account-summary" class="account-summary" hidden>
+            <div class="account-summary__header">
+              <div class="account-summary__avatar" aria-hidden="true">
+                <span data-avatar-preview>👤</span>
+              </div>
+              <div class="account-summary__details">
+                <h3 id="account-name"></h3>
+                <ul class="account-summary__list">
+                  <li>
+                    <span class="account-summary__label">Email</span>
+                    <span class="account-summary__value" id="account-email"></span>
+                  </li>
+                  <li>
+                    <span class="account-summary__label">ID do usuário</span>
+                    <span class="account-summary__value" id="session-status"></span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <section class="account-section" id="account-licenses" data-profile-section="licenses">
+              <header class="account-section__head">
+                <h3>Licenças ativas</h3>
+                <p>Acompanhe renovações e acessos liberados após cada compra.</p>
+              </header>
+              <p class="account-section__status" id="licenses-status"></p>
+              <ul id="licenses-list" class="library-list"></ul>
+            </section>
+            <section class="account-section" id="account-payments" data-profile-section="payments">
+              <header class="account-section__head">
+                <h3>Pagamentos recentes</h3>
+                <p>Histórico registrado pelo Stripe com status em tempo real.</p>
+              </header>
+              <p class="account-section__status" id="payments-status"></p>
+              <ul id="payments-list" class="payment-list" aria-live="polite"></ul>
+            </section>
+          </section>
+          <div id="auth-forms" class="account-forms">
+            <div class="auth-tabs" role="tablist" aria-label="Acessar conta">
+              <button
+                class="auth-tab is-active"
+                type="button"
+                role="tab"
+                id="auth-tab-login"
+                data-auth-tab="login"
+                aria-controls="auth-panel-login"
+                aria-selected="true"
+              >
+                Login
+              </button>
+              <button
+                class="auth-tab"
+                type="button"
+                role="tab"
+                id="auth-tab-register"
+                data-auth-tab="register"
+                aria-controls="auth-panel-register"
+                aria-selected="false"
+              >
+                Registrar
+              </button>
+            </div>
+            <div class="auth-panels">
+              <div
+                class="auth-panel"
+                id="auth-panel-login"
+                data-auth-panel="login"
+                role="tabpanel"
+                aria-labelledby="auth-tab-login"
+              >
+                <div class="card auth-card" data-auth-card="login">
+                  <form id="login-form" class="auth-form">
+                    <h3>Entrar</h3>
+                    <label for="login-email">Email</label>
+                    <input id="login-email" name="email" type="email" required autocomplete="email" />
+                    <label for="login-password">Senha</label>
+                    <div class="input-group input-group--password">
+                      <input
+                        id="login-password"
+                        name="password"
+                        type="password"
+                        required
+                        autocomplete="current-password"
+                      />
+                      <button
+                        class="password-toggle"
+                        type="button"
+                        data-password-toggle="login-password"
+                        aria-pressed="false"
+                      >
+                        Mostrar
+                      </button>
+                    </div>
+                    <button class="button" type="submit">Entrar</button>
+                    <button class="button button--ghost" id="magic-link" type="button">Receber link mágico</button>
+                    <p class="helper">Enviaremos um link de acesso instantâneo para seu email.</p>
+                  </form>
+                </div>
+              </div>
+              <div
+                class="auth-panel"
+                id="auth-panel-register"
+                data-auth-panel="register"
+                role="tabpanel"
+                aria-labelledby="auth-tab-register"
+                hidden
+              >
+                <div class="card auth-card auth-card--register" data-auth-card="register">
+                  <div class="auth-card__stage" id="signup-stage">
+                    <form id="signup-form" class="auth-form">
+                      <h3>Criar conta</h3>
+                      <label for="signup-email">Email</label>
+                      <input id="signup-email" name="email" type="email" required autocomplete="email" />
+                      <label for="signup-password">Senha</label>
+                      <div class="input-group input-group--password">
+                        <input
+                          id="signup-password"
+                          name="password"
+                          type="password"
+                          minlength="6"
+                          required
+                          autocomplete="new-password"
+                        />
+                        <button
+                          class="password-toggle"
+                          type="button"
+                          data-password-toggle="signup-password"
+                          aria-pressed="false"
+                        >
+                          Mostrar
+                        </button>
+                      </div>
+                      <label for="signup-confirm">Confirmar senha</label>
+                      <div class="input-group input-group--password">
+                        <input
+                          id="signup-confirm"
+                          name="confirmPassword"
+                          type="password"
+                          minlength="6"
+                          required
+                          autocomplete="new-password"
+                        />
+                        <button
+                          class="password-toggle"
+                          type="button"
+                          data-password-toggle="signup-confirm"
+                          aria-pressed="false"
+                        >
+                          Mostrar
+                        </button>
+                      </div>
+                      <p class="form-error" id="signup-error" hidden>As senhas não correspondem.</p>
+                      <button class="button button--primary" type="submit">Registrar</button>
+                      <p class="helper">Você receberá um email de confirmação enviado pelo Supabase.</p>
+                    </form>
+                  </div>
+                  <div class="auth-card__stage auth-confirmation" id="signup-confirmation" role="alert" hidden>
+                    <div class="auth-confirmation__icon" aria-hidden="true">📬</div>
+                    <h3>Verifique seu email</h3>
+                    <p>
+                      Enviamos um link de confirmação para
+                      <strong id="signup-confirmation-email"></strong>. Confirme para ativar sua conta e liberar o login.
+                    </p>
+                    <button class="button" type="button" data-switch-auth="login">Ir para login</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
