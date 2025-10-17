@@ -84,32 +84,6 @@ body[data-page='home']::before {
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-.promo-banner {
-  background: linear-gradient(90deg, #ff2156 0%, #ff4f7b 100%);
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 0.86rem;
-}
-
-.promo-banner__inner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  padding: 10px 0;
-  text-align: center;
-}
-
-.promo-banner__cta {
-  padding: 6px 16px;
-  background: rgba(255, 255, 255, 0.16);
-  border-radius: 999px;
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  border: 1px solid rgba(255, 255, 255, 0.32);
-}
-
 .navbar {
   backdrop-filter: blur(16px);
   background: rgba(5, 6, 10, 0.82);
@@ -601,11 +575,6 @@ body[data-page='home']::before {
 }
 
 @media (max-width: 640px) {
-  .promo-banner__inner {
-    flex-direction: column;
-    gap: 10px;
-  }
-
   .home-hero__actions {
     flex-direction: column;
     align-items: stretch;
