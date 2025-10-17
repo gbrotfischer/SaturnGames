@@ -29,9 +29,14 @@ const dom = {
   accountEmail: document.getElementById('account-email'),
   accountMeta: document.getElementById('session-status'),
   authForms: document.getElementById('auth-forms'),
+  authTabs: document.querySelectorAll('[data-auth-tab]'),
+  authPanels: document.querySelectorAll('[data-auth-panel]'),
+  authSwitchers: document.querySelectorAll('[data-switch-auth]'),
   signupForm: document.getElementById('signup-form'),
   loginForm: document.getElementById('login-form'),
   magicLink: document.getElementById('magic-link'),
+  signupConfirmation: document.getElementById('signup-confirmation'),
+  signupConfirmationEmail: document.getElementById('signup-confirmation-email'),
   avatarInitial: document.querySelector('[data-avatar-initial]'),
   avatarPreview: document.querySelector('[data-avatar-preview]'),
   accountOpeners: document.querySelectorAll('[data-open-account]'),
@@ -99,6 +104,20 @@ function setActiveNav() {
 }
 
 function attachCommonListeners() {
+  Array.from(dom.authTabs || []).forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.authTab || 'login';
+      switchAuthTab(target);
+    });
+  });
+
+  Array.from(dom.authSwitchers || []).forEach((button) => {
+    button.addEventListener('click', () => {
+      const target = button.dataset.switchAuth || 'login';
+      switchAuthTab(target);
+    });
+  });
+
   dom.accountToggle?.addEventListener('click', () => {
     if (dom.accountToggle.getAttribute('aria-expanded') === 'true') {
       closeAccountDrawer();
@@ -149,10 +168,19 @@ function attachCommonListeners() {
     setFormDisabled(form, true);
     const email = form.email.value.trim();
     const password = form.password.value.trim();
+    const confirmPassword = form.confirmPassword?.value?.trim();
+
+    if (confirmPassword !== undefined && password !== confirmPassword) {
+      showGlobalStatus('As senhas não conferem. Tente novamente.', 'error');
+      setFormDisabled(form, false);
+      return;
+    }
+
     try {
       const { error } = await supabase.auth.signUp({ email, password });
       if (error) throw error;
       showGlobalStatus('Conta criada! Verifique seu email para confirmar o cadastro.', 'success');
+      showSignupConfirmation(email);
       form.reset();
     } catch (error) {
       console.error(error);
@@ -196,6 +224,49 @@ function attachCommonListeners() {
       showGlobalStatus(error.message || 'Não foi possível enviar o link mágico.', 'error');
     }
   });
+
+  switchAuthTab('login');
+}
+
+function switchAuthTab(target = 'login') {
+  const normalized = target === 'register' ? 'register' : 'login';
+  resetSignupPanel();
+
+  Array.from(dom.authTabs || []).forEach((tab) => {
+    const isActive = tab.dataset.authTab === normalized;
+    tab.classList.toggle('is-active', isActive);
+    tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    tab.setAttribute('tabindex', isActive ? '0' : '-1');
+  });
+
+  Array.from(dom.authPanels || []).forEach((panel) => {
+    const isMatch = panel.dataset.authPanel === normalized;
+    panel.hidden = !isMatch;
+  });
+}
+
+function resetSignupPanel() {
+  if (dom.signupForm) {
+    dom.signupForm.hidden = false;
+  }
+  if (dom.signupConfirmation) {
+    dom.signupConfirmation.hidden = true;
+  }
+  if (dom.signupConfirmationEmail) {
+    dom.signupConfirmationEmail.textContent = '';
+  }
+}
+
+function showSignupConfirmation(email) {
+  if (dom.signupConfirmationEmail) {
+    dom.signupConfirmationEmail.textContent = email;
+  }
+  if (dom.signupForm) {
+    dom.signupForm.hidden = true;
+  }
+  if (dom.signupConfirmation) {
+    dom.signupConfirmation.hidden = false;
+  }
 }
 
 async function initAuth() {
@@ -247,6 +318,10 @@ async function updateAuthState() {
     if (dom.licensesStatus) dom.licensesStatus.textContent = '';
     if (dom.paymentsBody) dom.paymentsBody.innerHTML = '';
     if (dom.paymentsStatus) dom.paymentsStatus.textContent = '';
+
+    if (dom.signupConfirmation?.hidden !== false) {
+      switchAuthTab('login');
+    }
   }
 
   await loadProtectedData();

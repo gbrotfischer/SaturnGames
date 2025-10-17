@@ -2102,6 +2102,67 @@ select {
   gap: 16px;
 }
 
+.auth-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  background: rgba(13, 15, 24, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  gap: 6px;
+}
+
+.auth-tab {
+  border: none;
+  border-radius: calc(var(--radius-md) - 6px);
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 12px 18px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.auth-tab:hover,
+.auth-tab:focus-visible {
+  color: var(--text);
+}
+
+.auth-tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.auth-tab.is-active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.auth-panels {
+  display: grid;
+  gap: 16px;
+}
+
+.auth-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.auth-card {
+  width: 100%;
+}
+
+.auth-confirmation {
+  text-align: center;
+  align-items: center;
+}
+
+.auth-confirmation__icon {
+  font-size: 2.6rem;
+}
+
 .global-status {
   position: fixed;
   bottom: 32px;
