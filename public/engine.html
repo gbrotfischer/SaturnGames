@@ -249,22 +249,24 @@
                 role="tabpanel"
                 aria-labelledby="auth-tab-login"
               >
-                <form id="login-form" class="card auth-card">
-                  <h3>Entrar</h3>
-                  <label for="login-email">Email</label>
-                  <input id="login-email" name="email" type="email" required autocomplete="email" />
-                  <label for="login-password">Senha</label>
-                  <input
-                    id="login-password"
-                    name="password"
-                    type="password"
-                    required
-                    autocomplete="current-password"
-                  />
-                  <button class="button" type="submit">Entrar</button>
-                  <button class="button button--ghost" id="magic-link" type="button">Receber link mágico</button>
-                  <p class="helper">Enviaremos um link de acesso instantâneo para seu email.</p>
-                </form>
+                <div class="card auth-card" data-auth-card="login">
+                  <form id="login-form" class="auth-form">
+                    <h3>Entrar</h3>
+                    <label for="login-email">Email</label>
+                    <input id="login-email" name="email" type="email" required autocomplete="email" />
+                    <label for="login-password">Senha</label>
+                    <input
+                      id="login-password"
+                      name="password"
+                      type="password"
+                      required
+                      autocomplete="current-password"
+                    />
+                    <button class="button" type="submit">Entrar</button>
+                    <button class="button button--ghost" id="magic-link" type="button">Receber link mágico</button>
+                    <p class="helper">Enviaremos um link de acesso instantâneo para seu email.</p>
+                  </form>
+                </div>
               </div>
               <div
                 class="auth-panel"
@@ -274,39 +276,43 @@
                 aria-labelledby="auth-tab-register"
                 hidden
               >
-                <form id="signup-form" class="card auth-card">
-                  <h3>Criar conta</h3>
-                  <label for="signup-email">Email</label>
-                  <input id="signup-email" name="email" type="email" required autocomplete="email" />
-                  <label for="signup-password">Senha</label>
-                  <input
-                    id="signup-password"
-                    name="password"
-                    type="password"
-                    minlength="6"
-                    required
-                    autocomplete="new-password"
-                  />
-                  <label for="signup-confirm">Confirmar senha</label>
-                  <input
-                    id="signup-confirm"
-                    name="confirmPassword"
-                    type="password"
-                    minlength="6"
-                    required
-                    autocomplete="new-password"
-                  />
-                  <button class="button button--primary" type="submit">Registrar</button>
-                  <p class="helper">Você receberá um email de confirmação enviado pelo Supabase.</p>
-                </form>
-                <div class="card auth-card auth-confirmation" id="signup-confirmation" role="alert" hidden>
-                  <div class="auth-confirmation__icon" aria-hidden="true">📬</div>
-                  <h3>Verifique seu email</h3>
-                  <p>
-                    Enviamos um link de confirmação para
-                    <strong id="signup-confirmation-email"></strong>. Confirme para ativar sua conta e liberar o login.
-                  </p>
-                  <button class="button" type="button" data-switch-auth="login">Ir para login</button>
+                <div class="card auth-card auth-card--register" data-auth-card="register">
+                  <div class="auth-card__stage" id="signup-stage">
+                    <form id="signup-form" class="auth-form">
+                      <h3>Criar conta</h3>
+                      <label for="signup-email">Email</label>
+                      <input id="signup-email" name="email" type="email" required autocomplete="email" />
+                      <label for="signup-password">Senha</label>
+                      <input
+                        id="signup-password"
+                        name="password"
+                        type="password"
+                        minlength="6"
+                        required
+                        autocomplete="new-password"
+                      />
+                      <label for="signup-confirm">Confirmar senha</label>
+                      <input
+                        id="signup-confirm"
+                        name="confirmPassword"
+                        type="password"
+                        minlength="6"
+                        required
+                        autocomplete="new-password"
+                      />
+                      <button class="button button--primary" type="submit">Registrar</button>
+                      <p class="helper">Você receberá um email de confirmação enviado pelo Supabase.</p>
+                    </form>
+                  </div>
+                  <div class="auth-card__stage auth-confirmation" id="signup-confirmation" role="alert" hidden>
+                    <div class="auth-confirmation__icon" aria-hidden="true">📬</div>
+                    <h3>Verifique seu email</h3>
+                    <p>
+                      Enviamos um link de confirmação para
+                      <strong id="signup-confirmation-email"></strong>. Confirme para ativar sua conta e liberar o login.
+                    </p>
+                    <button class="button" type="button" data-switch-auth="login">Ir para login</button>
+                  </div>
                 </div>
               </div>
             </div>

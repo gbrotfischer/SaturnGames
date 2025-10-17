@@ -2151,7 +2151,22 @@ select {
 }
 
 .auth-card {
+  position: relative;
   width: 100%;
+}
+
+.auth-form {
+  display: grid;
+  gap: 16px;
+}
+
+.auth-card__stage {
+  display: grid;
+  gap: 16px;
+}
+
+.auth-card__stage[hidden] {
+  display: none;
 }
 
 .auth-confirmation {

@@ -32,6 +32,7 @@ const dom = {
   authTabs: document.querySelectorAll('[data-auth-tab]'),
   authPanels: document.querySelectorAll('[data-auth-panel]'),
   authSwitchers: document.querySelectorAll('[data-switch-auth]'),
+  signupStage: document.getElementById('signup-stage'),
   signupForm: document.getElementById('signup-form'),
   loginForm: document.getElementById('login-form'),
   magicLink: document.getElementById('magic-link'),
@@ -246,8 +247,8 @@ function switchAuthTab(target = 'login') {
 }
 
 function resetSignupPanel() {
-  if (dom.signupForm) {
-    dom.signupForm.hidden = false;
+  if (dom.signupStage) {
+    dom.signupStage.hidden = false;
   }
   if (dom.signupConfirmation) {
     dom.signupConfirmation.hidden = true;
@@ -261,8 +262,8 @@ function showSignupConfirmation(email) {
   if (dom.signupConfirmationEmail) {
     dom.signupConfirmationEmail.textContent = email;
   }
-  if (dom.signupForm) {
-    dom.signupForm.hidden = true;
+  if (dom.signupStage) {
+    dom.signupStage.hidden = true;
   }
   if (dom.signupConfirmation) {
     dom.signupConfirmation.hidden = false;
