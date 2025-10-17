@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pagamentos Saturn Games</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="/env.js" defer></script>
+    <script type="module" src="/app.js" defer></script>
+  </head>
+  <body data-page="payments">
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="sidebar__logo">
+          <span class="sidebar__logo-mark">🪐</span>
+          <span class="sidebar__logo-text">Saturn Games</span>
+        </div>
+        <nav class="sidebar__nav" aria-label="Principal">
+          <a class="nav-item" data-page-link="home" href="/">
+            <span class="nav-icon">🏠</span>
+            <span>Visão geral</span>
+          </a>
+          <a class="nav-item" data-page-link="games" href="/games.html">
+            <span class="nav-icon">🛒</span>
+            <span>Jogos</span>
+          </a>
+          <a class="nav-item" data-page-link="library" href="/library.html">
+            <span class="nav-icon">🎮</span>
+            <span>Biblioteca</span>
+          </a>
+          <a class="nav-item" data-page-link="payments" href="/payments.html">
+            <span class="nav-icon">💳</span>
+            <span>Pagamentos</span>
+          </a>
+          <a class="nav-item" data-page-link="engine" href="/engine.html">
+            <span class="nav-icon">📡</span>
+            <span>Motor de escuta</span>
+          </a>
+        </nav>
+        <div class="sidebar__cta">
+          <h2>Auditoria clara</h2>
+          <p>
+            Comprovantes, status e payloads ficam registrados para você auditar qualquer transação em
+            minutos.
+          </p>
+          <a class="button button--ghost" href="/engine.html">Saiba como monitoramos</a>
+        </div>
+        <div class="sidebar__footer">
+          <p>&copy; <span data-year></span> Saturn Games</p>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="topbar__title">
+            <p class="topbar__subtitle">Transparência completa</p>
+            <h1>Histórico de pagamentos</h1>
+          </div>
+          <div class="topbar__actions">
+            <button class="button button--ghost" id="signout" type="button" hidden>Sair</button>
+            <button
+              class="avatar-button"
+              id="account-toggle"
+              type="button"
+              aria-haspopup="dialog"
+              aria-expanded="false"
+            >
+              <span class="avatar-button__icon" data-avatar-initial>👤</span>
+            </button>
+          </div>
+        </header>
+
+        <section class="hero hero--cover" style="--hero-image: url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1400&q=80');">
+          <div class="hero__badge">Stripe + Supabase</div>
+          <div class="hero__content">
+            <div class="hero__text">
+              <h2>Controle financeiro com recibos detalhados</h2>
+              <p>
+                Cada pagamento gera registros verificáveis, status atualizados em tempo real e histórico
+                organizado para auditoria.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <header class="panel__header">
+            <div>
+              <h2>Compras registradas</h2>
+              <p class="panel__subtitle">Monitore valores, status e data de cada licença adquirida.</p>
+            </div>
+            <div class="status" id="payments-status" aria-live="polite"></div>
+          </header>
+          <div id="payments-auth-prompt" class="auth-prompt" hidden>
+            <p>Entre em sua conta para visualizar seu histórico de pagamentos.</p>
+            <button class="button button--primary" type="button" data-open-account>Fazer login</button>
+          </div>
+          <div class="table-wrapper">
+            <table class="table" aria-live="polite">
+              <thead>
+                <tr>
+                  <th>Jogo</th>
+                  <th>Valor</th>
+                  <th>Status</th>
+                  <th>Data</th>
+                </tr>
+              </thead>
+              <tbody id="payments-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel panel--transparent">
+          <div class="compliance-card">
+            <h2>Compliance dedicado</h2>
+            <p>
+              Relatórios completos podem ser exportados sob demanda para parceiros, marcas e equipes
+              jurídicas.
+            </p>
+            <button class="button button--ghost" type="button" data-open-account>Solicitar relatório</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="global-status" class="global-status" role="status" hidden></div>
+
+    <div class="account-drawer" id="account-drawer" aria-hidden="true">
+      <div class="account-drawer__overlay" data-close-account></div>
+      <div class="account-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="account-drawer-title">
+        <button class="account-drawer__close" id="account-close" type="button" aria-label="Fechar painel">
+          ✕
+        </button>
+        <div class="account-drawer__content">
+          <header class="account-drawer__header">
+            <p class="account-drawer__eyebrow">Acesso seguro</p>
+            <h2 id="account-drawer-title">Sua conta Saturn Games</h2>
+            <p class="account-drawer__subtitle">
+              Entre ou cadastre-se para acompanhar licenças, pagamentos e histórico de uso.
+            </p>
+          </header>
+          <section id="account-summary" class="account-summary" hidden>
+            <div class="account-summary__avatar" aria-hidden="true">
+              <span data-avatar-preview>👤</span>
+            </div>
+            <div class="account-summary__details">
+              <h3 id="account-name"></h3>
+              <p id="account-email" class="account-summary__email"></p>
+              <p class="account-summary__meta">ID do usuário: <span id="session-status"></span></p>
+            </div>
+            <div class="account-summary__actions">
+              <a class="button button--primary" href="/games.html">Comprar novos jogos</a>
+              <a class="button button--ghost" href="/library.html">Ver biblioteca</a>
+            </div>
+          </section>
+          <div id="auth-forms" class="account-forms">
+            <form id="signup-form" class="card">
+              <h3>Criar conta</h3>
+              <label for="signup-email">Email</label>
+              <input id="signup-email" name="email" type="email" required autocomplete="email" />
+              <label for="signup-password">Senha</label>
+              <input
+                id="signup-password"
+                name="password"
+                type="password"
+                minlength="6"
+                required
+                autocomplete="new-password"
+              />
+              <button class="button button--primary" type="submit">Cadastrar</button>
+              <p class="helper">Você receberá um email de confirmação enviado pelo Supabase.</p>
+            </form>
+            <form id="login-form" class="card">
+              <h3>Entrar</h3>
+              <label for="login-email">Email</label>
+              <input id="login-email" name="email" type="email" required autocomplete="email" />
+              <label for="login-password">Senha</label>
+              <input
+                id="login-password"
+                name="password"
+                type="password"
+                required
+                autocomplete="current-password"
+              />
+              <button class="button" type="submit">Entrar</button>
+              <button class="button button--ghost" id="magic-link" type="button">Receber link mágico</button>
+              <p class="helper">Enviaremos um link de acesso instantâneo para seu email.</p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
