@@ -2146,8 +2146,20 @@ select {
 }
 
 .auth-panel {
-  display: grid;
+  display: none;
   gap: 16px;
+}
+
+.auth-panel.is-active {
+  display: grid;
+}
+
+.auth-panel[hidden] {
+  display: none !important;
+}
+
+.auth-card__stage[hidden] {
+  display: none !important;
 }
 
 .auth-card {

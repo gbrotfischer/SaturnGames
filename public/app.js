@@ -242,16 +242,23 @@ function switchAuthTab(target = 'login') {
 
   Array.from(dom.authPanels || []).forEach((panel) => {
     const isMatch = panel.dataset.authPanel === normalized;
-    panel.hidden = !isMatch;
+    panel.classList.toggle('is-active', isMatch);
+    if (isMatch) {
+      panel.removeAttribute('hidden');
+    } else {
+      panel.setAttribute('hidden', '');
+    }
   });
 }
 
 function resetSignupPanel() {
   if (dom.signupStage) {
     dom.signupStage.hidden = false;
+    dom.signupStage.removeAttribute('hidden');
   }
   if (dom.signupConfirmation) {
     dom.signupConfirmation.hidden = true;
+    dom.signupConfirmation.setAttribute('hidden', '');
   }
   if (dom.signupConfirmationEmail) {
     dom.signupConfirmationEmail.textContent = '';
@@ -264,9 +271,11 @@ function showSignupConfirmation(email) {
   }
   if (dom.signupStage) {
     dom.signupStage.hidden = true;
+    dom.signupStage.setAttribute('hidden', '');
   }
   if (dom.signupConfirmation) {
     dom.signupConfirmation.hidden = false;
+    dom.signupConfirmation.removeAttribute('hidden');
   }
 }
 
