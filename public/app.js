@@ -28,12 +28,18 @@ const dom = {
   accountName: document.getElementById('account-name'),
   accountEmail: document.getElementById('account-email'),
   accountMeta: document.getElementById('session-status'),
+  profileSections: document.querySelectorAll('[data-profile-section]'),
+  licensesSection: document.getElementById('account-licenses'),
+  paymentsSection: document.getElementById('account-payments'),
   authForms: document.getElementById('auth-forms'),
   authTabs: document.querySelectorAll('[data-auth-tab]'),
   authPanels: document.querySelectorAll('[data-auth-panel]'),
   authSwitchers: document.querySelectorAll('[data-switch-auth]'),
   signupStage: document.getElementById('signup-stage'),
   signupForm: document.getElementById('signup-form'),
+  signupPassword: document.getElementById('signup-password'),
+  signupConfirm: document.getElementById('signup-confirm'),
+  signupError: document.getElementById('signup-error'),
   loginForm: document.getElementById('login-form'),
   magicLink: document.getElementById('magic-link'),
   signupConfirmation: document.getElementById('signup-confirmation'),
@@ -41,6 +47,7 @@ const dom = {
   avatarInitial: document.querySelector('[data-avatar-initial]'),
   avatarPreview: document.querySelector('[data-avatar-preview]'),
   accountOpeners: document.querySelectorAll('[data-open-account]'),
+  passwordToggles: document.querySelectorAll('[data-password-toggle]'),
   gamesGrid: document.getElementById('games-grid'),
   gamesStatus: document.getElementById('games-status'),
   homeFavorites: document.getElementById('home-favorites'),
@@ -48,10 +55,8 @@ const dom = {
   homeGamesCount: document.getElementById('home-games-count'),
   licensesList: document.getElementById('licenses-list'),
   licensesStatus: document.getElementById('licenses-status'),
-  libraryAuthPrompt: document.getElementById('library-auth-prompt'),
   paymentsBody: document.getElementById('payments-body'),
   paymentsStatus: document.getElementById('payments-status'),
-  paymentsAuthPrompt: document.getElementById('payments-auth-prompt'),
   gameEyebrow: document.getElementById('game-eyebrow'),
   gameTitle: document.getElementById('game-title'),
   gameSubtitle: document.getElementById('game-subtitle'),
@@ -78,6 +83,7 @@ const gamesIndex = new Map();
 let gamesLoadingPromise = null;
 let currentGameId = null;
 let currentGameLicense = null;
+let profileHighlightTimeout = null;
 
 if (supabase) {
   initAuth();
@@ -137,8 +143,31 @@ function attachCommonListeners() {
   });
 
   dom.accountOpeners.forEach((button) => {
-    button.addEventListener('click', openAccountDrawer);
+    button.addEventListener('click', () => {
+      openAccountDrawer();
+      const target = button.dataset.profileTarget;
+      if (target) {
+        highlightProfileSection(target);
+      }
+    });
   });
+
+  dom.passwordToggles.forEach((button) => {
+    const targetId = button.dataset.passwordToggle;
+    if (!targetId) return;
+    const input = document.getElementById(targetId);
+    if (!input) return;
+
+    button.addEventListener('click', () => {
+      const isVisible = input.getAttribute('type') === 'text';
+      input.setAttribute('type', isVisible ? 'password' : 'text');
+      button.setAttribute('aria-pressed', String(!isVisible));
+      button.textContent = isVisible ? 'Mostrar' : 'Ocultar';
+    });
+  });
+
+  dom.signupPassword?.addEventListener('input', clearSignupError);
+  dom.signupConfirm?.addEventListener('input', clearSignupError);
 
   dom.gameBuy?.addEventListener('click', () => {
     if (!currentGameId) return;
@@ -171,8 +200,15 @@ function attachCommonListeners() {
     const password = form.password.value.trim();
     const confirmPassword = form.confirmPassword?.value?.trim();
 
+    clearSignupError();
+
     if (confirmPassword !== undefined && password !== confirmPassword) {
-      showGlobalStatus('As senhas não conferem. Tente novamente.', 'error');
+      if (dom.signupError) {
+        dom.signupError.textContent = 'As senhas não correspondem.';
+        setElementHidden(dom.signupError, false);
+      } else {
+        showGlobalStatus('As senhas não correspondem.', 'error');
+      }
       setFormDisabled(form, false);
       return;
     }
@@ -183,6 +219,7 @@ function attachCommonListeners() {
       showGlobalStatus('Conta criada! Verifique seu email para confirmar o cadastro.', 'success');
       showSignupConfirmation(email);
       form.reset();
+      clearSignupError();
     } catch (error) {
       console.error(error);
       showGlobalStatus(error.message || 'Não foi possível criar a conta.', 'error');
@@ -257,6 +294,7 @@ function resetSignupPanel() {
   if (dom.signupConfirmationEmail) {
     dom.signupConfirmationEmail.textContent = '';
   }
+  clearSignupError();
 }
 
 function showSignupConfirmation(email) {
@@ -292,6 +330,8 @@ async function updateAuthState() {
 
   setElementHidden(dom.accountSummary, !isAuthenticated);
   setElementHidden(dom.authForms, isAuthenticated);
+  setElementHidden(dom.licensesSection, !isAuthenticated);
+  setElementHidden(dom.paymentsSection, !isAuthenticated);
 
   if (isAuthenticated) {
     const email = user.email || 'Conta Saturn';
@@ -299,16 +339,10 @@ async function updateAuthState() {
     if (dom.accountEmail) dom.accountEmail.textContent = email;
     if (dom.accountName) dom.accountName.textContent = `Olá, ${name}`;
     if (dom.accountMeta) dom.accountMeta.textContent = user.id;
-
-    setElementHidden(dom.libraryAuthPrompt, true);
-    setElementHidden(dom.paymentsAuthPrompt, true);
   } else {
     if (dom.accountEmail) dom.accountEmail.textContent = '';
     if (dom.accountName) dom.accountName.textContent = '';
     if (dom.accountMeta) dom.accountMeta.textContent = '';
-
-    setElementHidden(dom.libraryAuthPrompt, false);
-    setElementHidden(dom.paymentsAuthPrompt, false);
 
     if (dom.licensesList) dom.licensesList.innerHTML = '';
     if (dom.licensesStatus) dom.licensesStatus.textContent = '';
@@ -318,6 +352,11 @@ async function updateAuthState() {
     if (dom.signupConfirmation?.hidden !== false) {
       switchAuthTab('login');
     }
+  }
+
+  if (isAuthenticated) {
+    await loadLicenses();
+    await loadPayments();
   }
 
   await loadProtectedData();
@@ -335,21 +374,8 @@ function setElementHidden(element, shouldHide) {
 }
 
 async function loadProtectedData() {
-  switch (page) {
-    case 'games':
-      // no extra data needed
-      break;
-    case 'game':
-      await updateGameAccessState();
-      break;
-    case 'library':
-      await loadLicenses();
-      break;
-    case 'payments':
-      await loadPayments();
-      break;
-    default:
-      break;
+  if (page === 'game') {
+    await updateGameAccessState();
   }
 }
 
@@ -929,11 +955,6 @@ async function updateGameAccessState() {
 }
 
 async function handleGameDownload() {
-  if (page !== 'game') {
-    window.location.href = '/library.html';
-    return;
-  }
-
   if (!currentGameId) {
     showGlobalStatus('Selecione um jogo antes de baixar os recursos.', 'error');
     return;
@@ -959,8 +980,9 @@ async function handleGameDownload() {
     return;
   }
 
-  showGlobalStatus('Abrindo sua biblioteca para iniciar o download.', 'success');
-  window.location.href = `/library.html?game=${encodeURIComponent(currentGameId)}`;
+  showGlobalStatus('Sua licença está ativa! Consulte os downloads na seção de jogos licenciados.', 'success');
+  openAccountDrawer();
+  highlightProfileSection('licenses');
 }
 
 
@@ -1226,6 +1248,39 @@ function setFormDisabled(form, disabled) {
   Array.from(form.elements).forEach((el) => {
     el.disabled = disabled;
   });
+}
+
+function highlightProfileSection(sectionKey) {
+  if (!sectionKey) return;
+
+  const sections = dom.profileSections?.length
+    ? Array.from(dom.profileSections)
+    : Array.from(document.querySelectorAll('[data-profile-section]'));
+  const section = sections.find((element) => element.dataset.profileSection === sectionKey);
+  if (!section) return;
+
+  sections.forEach((element) => {
+    if (element !== section) {
+      element.classList.remove('is-highlighted');
+    }
+  });
+
+  section.classList.add('is-highlighted');
+
+  if (profileHighlightTimeout) {
+    clearTimeout(profileHighlightTimeout);
+  }
+
+  profileHighlightTimeout = setTimeout(() => {
+    section.classList.remove('is-highlighted');
+  }, 4000);
+}
+
+function clearSignupError() {
+  if (dom.signupError) {
+    dom.signupError.textContent = '';
+    setElementHidden(dom.signupError, true);
+  }
 }
 
 let statusTimeout = null;

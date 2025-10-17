@@ -32,9 +32,7 @@
           <nav class="navbar__nav" aria-label="Principal">
             <a class="navbar__link" data-page-link="home" href="/">Home</a>
             <a class="navbar__link" data-page-link="games" href="/games.html">Jogos</a>
-            <a class="navbar__link" data-page-link="library" href="/library.html">Biblioteca</a>
-            <a class="navbar__link" data-page-link="payments" href="/payments.html">Pagamentos</a>
-            <a class="navbar__link" data-page-link="engine" href="/engine.html">Motor</a>
+            <a class="navbar__link" data-page-link="engine" href="/#motor">Motor</a>
           </nav>
           <div class="navbar__actions">
             <button class="button button--ghost" id="signout" type="button" hidden>Sair</button>
@@ -79,8 +77,7 @@
           <p>© <span data-year></span> Saturn Games Studio · Todos os direitos reservados.</p>
           <nav aria-label="Links institucionais">
             <a href="/games.html">Jogos</a>
-            <a href="/payments.html">Histórico</a>
-            <a href="/engine.html">Motor</a>
+            <a href="/#motor">Motor de escuta</a>
             <a href="mailto:suporte@saturn.games">Contato</a>
           </nav>
         </div>
@@ -104,18 +101,44 @@
             </p>
           </header>
           <section id="account-summary" class="account-summary" hidden>
-            <div class="account-summary__avatar" aria-hidden="true">
-              <span data-avatar-preview>👤</span>
+            <div class="account-summary__header">
+              <div class="account-summary__avatar" aria-hidden="true">
+                <span data-avatar-preview>👤</span>
+              </div>
+              <div class="account-summary__details">
+                <h3 id="account-name"></h3>
+                <p id="account-email" class="account-summary__email"></p>
+                <p class="account-summary__meta">ID do usuário: <span id="session-status"></span></p>
+              </div>
             </div>
-            <div class="account-summary__details">
-              <h3 id="account-name"></h3>
-              <p id="account-email" class="account-summary__email"></p>
-              <p class="account-summary__meta">ID do usuário: <span id="session-status"></span></p>
-            </div>
-            <div class="account-summary__actions">
-              <a class="button button--primary" href="/library.html">Abrir biblioteca</a>
-              <a class="button button--ghost" href="/payments.html">Ver pagamentos</a>
-            </div>
+            <section class="account-block" id="account-licenses" data-profile-section="licenses">
+              <header class="account-block__header">
+                <h3>Licenças ativas</h3>
+                <p>Gerenciamos renovações e vencimentos diretamente no seu perfil.</p>
+              </header>
+              <p class="account-block__status" id="licenses-status"></p>
+              <ul id="licenses-list" class="library-list"></ul>
+            </section>
+            <section class="account-block" id="account-payments" data-profile-section="payments">
+              <header class="account-block__header">
+                <h3>Pagamentos recentes</h3>
+                <p>Transações registradas com Stripe e armazenadas no Supabase.</p>
+              </header>
+              <p class="account-block__status" id="payments-status"></p>
+              <div class="table-wrapper table-wrapper--compact">
+                <table class="table table--compact" aria-live="polite">
+                  <thead>
+                    <tr>
+                      <th>Jogo</th>
+                      <th>Valor</th>
+                      <th>Status</th>
+                      <th>Data</th>
+                    </tr>
+                  </thead>
+                  <tbody id="payments-body"></tbody>
+                </table>
+              </div>
+            </section>
           </section>
           <div id="auth-forms" class="account-forms">
             <div class="auth-tabs" role="tablist" aria-label="Acessar conta">
@@ -156,13 +179,23 @@
                     <label for="login-email">Email</label>
                     <input id="login-email" name="email" type="email" required autocomplete="email" />
                     <label for="login-password">Senha</label>
-                    <input
-                      id="login-password"
-                      name="password"
-                      type="password"
-                      required
-                      autocomplete="current-password"
-                    />
+                    <div class="input-group input-group--password">
+                      <input
+                        id="login-password"
+                        name="password"
+                        type="password"
+                        required
+                        autocomplete="current-password"
+                      />
+                      <button
+                        class="password-toggle"
+                        type="button"
+                        data-password-toggle="login-password"
+                        aria-pressed="false"
+                      >
+                        Mostrar
+                      </button>
+                    </div>
                     <button class="button" type="submit">Entrar</button>
                     <button class="button button--ghost" id="magic-link" type="button">Receber link mágico</button>
                     <p class="helper">Enviaremos um link de acesso instantâneo para seu email.</p>
@@ -184,23 +217,44 @@
                       <label for="signup-email">Email</label>
                       <input id="signup-email" name="email" type="email" required autocomplete="email" />
                       <label for="signup-password">Senha</label>
-                      <input
-                        id="signup-password"
-                        name="password"
-                        type="password"
-                        minlength="6"
-                        required
-                        autocomplete="new-password"
-                      />
+                      <div class="input-group input-group--password">
+                        <input
+                          id="signup-password"
+                          name="password"
+                          type="password"
+                          minlength="6"
+                          required
+                          autocomplete="new-password"
+                        />
+                        <button
+                          class="password-toggle"
+                          type="button"
+                          data-password-toggle="signup-password"
+                          aria-pressed="false"
+                        >
+                          Mostrar
+                        </button>
+                      </div>
                       <label for="signup-confirm">Confirmar senha</label>
-                      <input
-                        id="signup-confirm"
-                        name="confirmPassword"
-                        type="password"
-                        minlength="6"
-                        required
-                        autocomplete="new-password"
-                      />
+                      <div class="input-group input-group--password">
+                        <input
+                          id="signup-confirm"
+                          name="confirmPassword"
+                          type="password"
+                          minlength="6"
+                          required
+                          autocomplete="new-password"
+                        />
+                        <button
+                          class="password-toggle"
+                          type="button"
+                          data-password-toggle="signup-confirm"
+                          aria-pressed="false"
+                        >
+                          Mostrar
+                        </button>
+                      </div>
+                      <p class="form-error" id="signup-error" hidden>As senhas não correspondem.</p>
                       <button class="button button--primary" type="submit">Registrar</button>
                       <p class="helper">Você receberá um email de confirmação enviado pelo Supabase.</p>
                     </form>
