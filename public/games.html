@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Biblioteca Saturn Games</title>
+    <title>Jogos Saturn Games</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -15,55 +15,28 @@
     <script src="/env.js" defer></script>
     <script type="module" src="/app.js" defer></script>
   </head>
-  <body data-page="library">
-    <div class="app-shell">
-      <aside class="sidebar">
-        <div class="sidebar__logo">
-          <span class="sidebar__logo-mark">🪐</span>
-          <span class="sidebar__logo-text">Saturn Games</span>
+  <body data-page="games">
+    <header class="site-header">
+      <div class="promo-banner">
+        <div class="container promo-banner__inner">
+          <p>Jogos licenciados com checkout Stripe e entrega instantânea para sua live TikTok.</p>
+          <a class="promo-banner__cta" href="#catalogo">Ver catálogo</a>
         </div>
-        <nav class="sidebar__nav" aria-label="Principal">
-          <a class="nav-item" data-page-link="home" href="/">
-            <span class="nav-icon">🏠</span>
-            <span>Visão geral</span>
+      </div>
+      <div class="navbar">
+        <div class="container navbar__inner">
+          <a class="brand" href="/">
+            <span class="brand__mark">🪐</span>
+            <span class="brand__text">Saturn Games</span>
           </a>
-          <a class="nav-item" data-page-link="games" href="/games.html">
-            <span class="nav-icon">🛒</span>
-            <span>Jogos</span>
-          </a>
-          <a class="nav-item" data-page-link="library" href="/library.html">
-            <span class="nav-icon">🎮</span>
-            <span>Biblioteca</span>
-          </a>
-          <a class="nav-item" data-page-link="payments" href="/payments.html">
-            <span class="nav-icon">💳</span>
-            <span>Pagamentos</span>
-          </a>
-          <a class="nav-item" data-page-link="engine" href="/engine.html">
-            <span class="nav-icon">📡</span>
-            <span>Motor de escuta</span>
-          </a>
-        </nav>
-        <div class="sidebar__cta">
-          <h2>Atualize sempre</h2>
-          <p>
-            Licenças expiram mensalmente. Garanta sua renovação com antecedência para evitar pausas na
-            live.
-          </p>
-          <a class="button button--ghost" href="/games.html">Renovar licenças</a>
-        </div>
-        <div class="sidebar__footer">
-          <p>&copy; <span data-year></span> Saturn Games</p>
-        </div>
-      </aside>
-
-      <main class="main">
-        <header class="topbar">
-          <div class="topbar__title">
-            <p class="topbar__subtitle">Jogos liberados</p>
-            <h1>Sua biblioteca</h1>
-          </div>
-          <div class="topbar__actions">
+          <nav class="navbar__nav" aria-label="Principal">
+            <a class="navbar__link" data-page-link="home" href="/">Home</a>
+            <a class="navbar__link" data-page-link="games" href="/games.html">Jogos</a>
+            <a class="navbar__link" data-page-link="library" href="/library.html">Biblioteca</a>
+            <a class="navbar__link" data-page-link="payments" href="/payments.html">Pagamentos</a>
+            <a class="navbar__link" data-page-link="engine" href="/engine.html">Motor</a>
+          </nav>
+          <div class="navbar__actions">
             <button class="button button--ghost" id="signout" type="button" hidden>Sair</button>
             <button
               class="avatar-button"
@@ -75,48 +48,44 @@
               <span class="avatar-button__icon" data-avatar-initial>👤</span>
             </button>
           </div>
-        </header>
+        </div>
+      </div>
+    </header>
 
-        <section class="hero hero--cover" style="--hero-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1400&q=80');">
-          <div class="hero__badge">Gerencie o acesso da sua live</div>
-          <div class="hero__content">
-            <div class="hero__text">
-              <h2>Todos os seus títulos ativos, em um único lugar</h2>
-              <p>
-                Visualize expirations, status e histórico de renovações. Reative jogos expirados em
-                poucos cliques.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel">
-          <header class="panel__header">
-            <div>
-              <h2>Licenças</h2>
-              <p class="panel__subtitle">Acesso válido por 30 dias a partir da última compra.</p>
-            </div>
-            <div class="status" id="licenses-status" aria-live="polite"></div>
-          </header>
-          <div id="library-auth-prompt" class="auth-prompt" hidden>
-            <p>Entre em sua conta para visualizar os jogos liberados para sua live.</p>
-            <button class="button button--primary" type="button" data-open-account>Fazer login</button>
-          </div>
-          <ul id="licenses-list" class="library-list"></ul>
-        </section>
-
-        <section class="panel panel--transparent">
-          <div class="support-card">
-            <h2>Precisa de ajuda?</h2>
-            <p>
-              Nosso time acompanha cada integração com testes guiados para garantir que o jogo esteja
-              perfeito antes da live.
+    <main class="store" id="catalogo">
+      <section class="store-catalog">
+        <div class="container">
+          <div class="store-catalog__intro">
+            <p class="eyebrow">Catálogo oficial</p>
+            <h1>Jogos originais para maximizar suas lives</h1>
+            <p class="store-catalog__lead">
+              Cada compra libera imediatamente +1 mês de licença oficial, com suporte humano e integrações
+              nativas com o Motor de Escuta Saturn.
             </p>
-            <button class="button button--ghost" type="button" data-open-account>Contatar suporte</button>
           </div>
-        </section>
-      </main>
-    </div>
+          <p class="section-status" id="games-status" aria-live="polite"></p>
+          <div class="store-grid" id="games-grid" aria-live="polite"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container site-footer__inner">
+        <div class="site-footer__brand">
+          <span class="brand__mark">🪐</span>
+          <span class="brand__text">Saturn Games</span>
+        </div>
+        <div class="site-footer__meta">
+          <p>© <span data-year></span> Saturn Games Studio · Todos os direitos reservados.</p>
+          <nav aria-label="Links institucionais">
+            <a href="/games.html">Jogos</a>
+            <a href="/payments.html">Histórico</a>
+            <a href="/engine.html">Motor</a>
+            <a href="mailto:suporte@saturn.games">Contato</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
 
     <div id="global-status" class="global-status" role="status" hidden></div>
 
@@ -131,7 +100,7 @@
             <p class="account-drawer__eyebrow">Acesso seguro</p>
             <h2 id="account-drawer-title">Sua conta Saturn Games</h2>
             <p class="account-drawer__subtitle">
-              Entre ou cadastre-se para acompanhar licenças, pagamentos e histórico de uso.
+              Entre ou cadastre-se para finalizar compras e acompanhar licenças.
             </p>
           </header>
           <section id="account-summary" class="account-summary" hidden>
@@ -144,7 +113,7 @@
               <p class="account-summary__meta">ID do usuário: <span id="session-status"></span></p>
             </div>
             <div class="account-summary__actions">
-              <a class="button button--primary" href="/games.html">Comprar novos jogos</a>
+              <a class="button button--primary" href="/library.html">Abrir biblioteca</a>
               <a class="button button--ghost" href="/payments.html">Ver pagamentos</a>
             </div>
           </section>

@@ -46,6 +46,19 @@ const dom = {
   paymentsBody: document.getElementById('payments-body'),
   paymentsStatus: document.getElementById('payments-status'),
   paymentsAuthPrompt: document.getElementById('payments-auth-prompt'),
+  gameEyebrow: document.getElementById('game-eyebrow'),
+  gameTitle: document.getElementById('game-title'),
+  gameSubtitle: document.getElementById('game-subtitle'),
+  gamePrice: document.getElementById('game-price'),
+  gameDescription: document.getElementById('game-description'),
+  gameTags: document.getElementById('game-tags'),
+  gameCover: document.getElementById('game-cover'),
+  gameGallery: document.getElementById('game-gallery'),
+  gameHighlights: document.getElementById('game-highlights'),
+  gameBuy: document.getElementById('game-buy'),
+  gameDownload: document.getElementById('game-download'),
+  gameStatus: document.getElementById('game-status'),
+  gameOwnership: document.getElementById('game-ownership'),
   globalStatus: document.getElementById('global-status')
 };
 
@@ -57,6 +70,8 @@ let currentSession = null;
 let gamesCache = [];
 const gamesIndex = new Map();
 let gamesLoadingPromise = null;
+let currentGameId = null;
+let currentGameLicense = null;
 
 if (supabase) {
   initAuth();
@@ -64,15 +79,18 @@ if (supabase) {
   console.warn('Supabase não configurado. Recursos autenticados indisponíveis.');
 }
 
-if (page === 'store') {
+if (page === 'games') {
   loadGames();
 } else if (page === 'home') {
   initHomePage();
+} else if (page === 'game') {
+  initGameDetailPage();
 }
 
 function setActiveNav() {
+  const activeKey = page === 'game' ? 'games' : page;
   dom.navItems.forEach((link) => {
-    if (link.dataset.pageLink === page) {
+    if (link.dataset.pageLink === activeKey) {
       link.classList.add('active');
     } else {
       link.classList.remove('active');
@@ -100,6 +118,16 @@ function attachCommonListeners() {
 
   dom.accountOpeners.forEach((button) => {
     button.addEventListener('click', openAccountDrawer);
+  });
+
+  dom.gameBuy?.addEventListener('click', () => {
+    if (!currentGameId) return;
+    initiateCheckout(currentGameId);
+  });
+
+  dom.gameDownload?.addEventListener('click', (event) => {
+    event.preventDefault();
+    handleGameDownload();
   });
 
   dom.signout?.addEventListener('click', async () => {
@@ -207,8 +235,6 @@ async function updateAuthState() {
 
     if (dom.libraryAuthPrompt) dom.libraryAuthPrompt.hidden = true;
     if (dom.paymentsAuthPrompt) dom.paymentsAuthPrompt.hidden = true;
-
-    await loadProtectedData();
   } else {
     if (dom.accountEmail) dom.accountEmail.textContent = '';
     if (dom.accountName) dom.accountName.textContent = '';
@@ -222,12 +248,17 @@ async function updateAuthState() {
     if (dom.paymentsBody) dom.paymentsBody.innerHTML = '';
     if (dom.paymentsStatus) dom.paymentsStatus.textContent = '';
   }
+
+  await loadProtectedData();
 }
 
 async function loadProtectedData() {
   switch (page) {
-    case 'store':
+    case 'games':
       // no extra data needed
+      break;
+    case 'game':
+      await updateGameAccessState();
       break;
     case 'library':
       await loadLicenses();
@@ -298,6 +329,40 @@ function renderGames(games) {
   const fragment = document.createDocumentFragment();
   games.forEach((game) => fragment.appendChild(createGameCard(game)));
   dom.gamesGrid.appendChild(fragment);
+}
+
+async function initGameDetailPage() {
+  const params = new URLSearchParams(window.location.search);
+  const gameId = params.get('id');
+
+  if (!gameId) {
+    setGameStatus('Selecione um jogo válido no catálogo para ver os detalhes.', 'error');
+    return;
+  }
+
+  currentGameId = gameId;
+  currentGameLicense = null;
+
+  if (!supabase) {
+    setGameStatus('Configure o Supabase para exibir os dados oficiais deste jogo.', 'error');
+    if (dom.gameBuy) dom.gameBuy.disabled = true;
+    if (dom.gameDownload) dom.gameDownload.disabled = true;
+    return;
+  }
+
+  setGameStatus('Carregando informações do jogo...', 'info');
+
+  await loadGames();
+
+  const game = gamesIndex.get(gameId);
+  if (!game) {
+    setGameStatus('Não encontramos este jogo. Volte ao catálogo e escolha outra opção.', 'error');
+    return;
+  }
+
+  renderGameDetail(game);
+  setGameStatus('');
+  await updateGameAccessState();
 }
 
 async function initHomePage() {
@@ -374,6 +439,24 @@ const tagPool = [
   'Pronto para OBS'
 ];
 
+const detailHighlights = [
+  {
+    icon: '⚡',
+    title: 'Resposta instantânea',
+    description: 'Triggers conectados ao chat TikTok com latência ultrabaixa controlada pelo Motor Saturn.'
+  },
+  {
+    icon: '🎮',
+    title: 'Painel para streamers',
+    description: 'Configure desafios, metas e animações com poucos cliques e visualize métricas ao vivo.'
+  },
+  {
+    icon: '🔒',
+    title: 'Licença rastreável',
+    description: 'Stripe e Supabase mantêm auditoria completa de cada compra e extensão de acesso.'
+  }
+];
+
 function getGameGallery(gameId = '') {
   if (galleryPool.length === 0) return [];
   let hash = 0;
@@ -425,6 +508,13 @@ function createGameCard(game) {
   card.className = 'store-card';
   card.dataset.gameId = game.id;
 
+  card.addEventListener('click', (event) => {
+    if (event.target.closest('button') || event.target.closest('.store-card__control') || event.target.closest('.store-card__dot')) {
+      return;
+    }
+    window.location.href = `/game.html?id=${encodeURIComponent(game.id)}`;
+  });
+
   const carousel = createGameCarousel(game);
 
   const body = document.createElement('div');
@@ -432,7 +522,11 @@ function createGameCard(game) {
 
   const title = document.createElement('h3');
   title.className = 'store-card__title';
-  title.textContent = game.name;
+  const titleLink = document.createElement('a');
+  titleLink.href = `/game.html?id=${encodeURIComponent(game.id)}`;
+  titleLink.textContent = game.name;
+  titleLink.addEventListener('click', (event) => event.stopPropagation());
+  title.appendChild(titleLink);
 
   const tags = document.createElement('div');
   tags.className = 'store-card__tags';
@@ -462,7 +556,10 @@ function createGameCard(game) {
   action.className = 'button button--primary';
   action.type = 'button';
   action.textContent = 'Comprar agora';
-  action.addEventListener('click', () => initiateCheckout(game.id));
+  action.addEventListener('click', (event) => {
+    event.stopPropagation();
+    initiateCheckout(game.id);
+  });
 
   const note = document.createElement('p');
   note.className = 'store-card__note';
@@ -483,6 +580,86 @@ function createGameCard(game) {
   card.appendChild(carousel);
   card.appendChild(body);
   return card;
+}
+
+function renderGameDetail(game) {
+  if (dom.gameEyebrow) dom.gameEyebrow.textContent = 'Licença oficial Saturn Games';
+  if (dom.gameTitle) dom.gameTitle.textContent = game.name;
+  if (dom.gameSubtitle) {
+    dom.gameSubtitle.textContent = 'Sincronize gifts, metas e triggers do chat com latência ultrabaixa.';
+  }
+  if (dom.gamePrice) dom.gamePrice.textContent = formatCurrency(game.price_cents, game.currency);
+  if (dom.gameDescription) dom.gameDescription.textContent = getGameDescription(game.id);
+  if (dom.gameTags) renderGameTags(game);
+  if (dom.gameBuy) dom.gameBuy.disabled = false;
+  if (dom.gameDownload) dom.gameDownload.disabled = true;
+  updateGameCover(getGameArt(game.id), game.name);
+  renderGameGallery(getGameGallery(game.id), game.name);
+  renderGameHighlights();
+  document.title = `${game.name} · Saturn Games`;
+}
+
+function renderGameTags(game) {
+  if (!dom.gameTags) return;
+  dom.gameTags.innerHTML = '';
+  const fragment = document.createDocumentFragment();
+  getGameTags(game.id).forEach((label) => {
+    const chip = document.createElement('span');
+    chip.className = 'game-hero__tag';
+    chip.textContent = label;
+    fragment.appendChild(chip);
+  });
+  dom.gameTags.appendChild(fragment);
+}
+
+function updateGameCover(imageUrl, gameName = '') {
+  if (!dom.gameCover || !imageUrl) return;
+  dom.gameCover.style.setProperty('--game-cover', `url('${imageUrl}')`);
+  if (gameName) {
+    dom.gameCover.setAttribute('aria-label', `Arte principal do jogo ${gameName}`);
+  }
+}
+
+function renderGameGallery(images, gameName = '') {
+  if (!dom.gameGallery) return;
+  dom.gameGallery.innerHTML = '';
+  if (!images || images.length === 0) return;
+  const fragment = document.createDocumentFragment();
+  images.forEach((src, index) => {
+    const thumb = document.createElement('button');
+    thumb.type = 'button';
+    thumb.className = 'game-hero__thumb';
+    thumb.style.setProperty('--thumb-image', `url('${src}')`);
+    thumb.setAttribute('aria-label', `Mostrar imagem ${index + 1} do jogo`);
+    thumb.addEventListener('click', () => updateGameCover(src, gameName));
+    fragment.appendChild(thumb);
+  });
+  dom.gameGallery.appendChild(fragment);
+}
+
+function renderGameHighlights() {
+  if (!dom.gameHighlights) return;
+  dom.gameHighlights.innerHTML = '';
+  const fragment = document.createDocumentFragment();
+  detailHighlights.forEach((item) => {
+    const li = document.createElement('li');
+    li.className = 'game-hero__highlight';
+    const icon = document.createElement('span');
+    icon.className = 'game-hero__highlight-icon';
+    icon.textContent = item.icon;
+    const content = document.createElement('div');
+    content.className = 'game-hero__highlight-content';
+    const title = document.createElement('strong');
+    title.textContent = item.title;
+    const description = document.createElement('p');
+    description.textContent = item.description;
+    content.appendChild(title);
+    content.appendChild(description);
+    li.appendChild(icon);
+    li.appendChild(content);
+    fragment.appendChild(li);
+  });
+  dom.gameHighlights.appendChild(fragment);
 }
 
 function createGameCarousel(game) {
@@ -583,6 +760,127 @@ function setCarouselIndex(carousel, nextIndex, animate = true) {
     dot.classList.toggle('is-active', dotIndex === sanitized);
   });
 }
+
+function setGameStatus(message = '', tone = 'info') {
+  if (!dom.gameStatus) return;
+  dom.gameStatus.textContent = message;
+  dom.gameStatus.dataset.tone = message ? tone : '';
+  dom.gameStatus.hidden = !message;
+}
+
+async function updateGameAccessState() {
+  if (page !== 'game' || !dom.gameOwnership) return;
+
+  if (!currentGameId) {
+    dom.gameOwnership.textContent = '';
+    dom.gameOwnership.dataset.state = '';
+    if (dom.gameDownload) dom.gameDownload.disabled = true;
+    return;
+  }
+
+  if (!supabase) {
+    dom.gameOwnership.textContent = 'Configure o Supabase para validar licenças.';
+    dom.gameOwnership.dataset.state = 'error';
+    if (dom.gameDownload) dom.gameDownload.disabled = true;
+    return;
+  }
+
+  if (!currentSession?.user) {
+    currentGameLicense = null;
+    dom.gameOwnership.textContent = 'Entre para verificar se já possui este jogo.';
+    dom.gameOwnership.dataset.state = 'muted';
+    if (dom.gameDownload) dom.gameDownload.disabled = true;
+    if (dom.gameBuy) dom.gameBuy.textContent = 'Comprar agora';
+    return;
+  }
+
+  dom.gameOwnership.textContent = 'Verificando sua licença...';
+  dom.gameOwnership.dataset.state = 'loading';
+  if (dom.gameDownload) dom.gameDownload.disabled = true;
+
+  try {
+    const { data, error } = await supabase
+      .from('user_game_access')
+      .select('id, expiration_date, is_active')
+      .eq('user_id', currentSession.user.id)
+      .eq('game_id', currentGameId)
+      .order('expiration_date', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error && error.code !== 'PGRST116') {
+      throw error;
+    }
+
+    currentGameLicense = data || null;
+  } catch (error) {
+    console.error(error);
+    dom.gameOwnership.textContent = 'Não foi possível consultar sua licença agora.';
+    dom.gameOwnership.dataset.state = 'error';
+    showGlobalStatus('Não foi possível verificar a licença deste jogo.', 'error');
+    return;
+  }
+
+  if (!currentGameLicense) {
+    dom.gameOwnership.textContent = 'Licença ainda não adquirida. Clique em “Comprar agora” para garantir acesso.';
+    dom.gameOwnership.dataset.state = 'muted';
+    if (dom.gameDownload) dom.gameDownload.disabled = true;
+    if (dom.gameBuy) dom.gameBuy.textContent = 'Comprar agora';
+    return;
+  }
+
+  const expires = currentGameLicense.expiration_date
+    ? formatDate(currentGameLicense.expiration_date)
+    : 'sem data definida';
+
+  if (currentGameLicense.is_active) {
+    dom.gameOwnership.textContent = `Licença ativa. Expira em ${expires}.`;
+    dom.gameOwnership.dataset.state = 'success';
+    if (dom.gameDownload) dom.gameDownload.disabled = false;
+    if (dom.gameBuy) dom.gameBuy.textContent = 'Renovar licença';
+  } else {
+    dom.gameOwnership.textContent = `Sua última licença expirou em ${expires}. Renove para continuar jogando.`;
+    dom.gameOwnership.dataset.state = 'muted';
+    if (dom.gameDownload) dom.gameDownload.disabled = true;
+    if (dom.gameBuy) dom.gameBuy.textContent = 'Renovar licença';
+  }
+}
+
+async function handleGameDownload() {
+  if (page !== 'game') {
+    window.location.href = '/library.html';
+    return;
+  }
+
+  if (!currentGameId) {
+    showGlobalStatus('Selecione um jogo antes de baixar os recursos.', 'error');
+    return;
+  }
+
+  if (!currentSession?.user) {
+    showGlobalStatus('Faça login para baixar os recursos deste jogo.', 'error');
+    openAccountDrawer();
+    return;
+  }
+
+  if (!supabase) {
+    showGlobalStatus('Configure o Supabase para liberar downloads.', 'error');
+    return;
+  }
+
+  if (!currentGameLicense || !currentGameLicense.is_active) {
+    await updateGameAccessState();
+  }
+
+  if (!currentGameLicense || !currentGameLicense.is_active) {
+    showGlobalStatus('É necessário ter uma licença ativa para baixar este jogo.', 'error');
+    return;
+  }
+
+  showGlobalStatus('Abrindo sua biblioteca para iniciar o download.', 'success');
+  window.location.href = `/library.html?game=${encodeURIComponent(currentGameId)}`;
+}
+
 
 function shiftCarousel(carousel, delta) {
   const count = Number(carousel.dataset.count || '0');
