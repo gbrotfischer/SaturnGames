@@ -107,37 +107,33 @@
               </div>
               <div class="account-summary__details">
                 <h3 id="account-name"></h3>
-                <p id="account-email" class="account-summary__email"></p>
-                <p class="account-summary__meta">ID do usuário: <span id="session-status"></span></p>
+                <ul class="account-summary__list">
+                  <li>
+                    <span class="account-summary__label">Email</span>
+                    <span class="account-summary__value" id="account-email"></span>
+                  </li>
+                  <li>
+                    <span class="account-summary__label">ID do usuário</span>
+                    <span class="account-summary__value" id="session-status"></span>
+                  </li>
+                </ul>
               </div>
             </div>
-            <section class="account-block" id="account-licenses" data-profile-section="licenses">
-              <header class="account-block__header">
+            <section class="account-section" id="account-licenses" data-profile-section="licenses">
+              <header class="account-section__head">
                 <h3>Licenças ativas</h3>
                 <p>Gerenciamos renovações e vencimentos diretamente no seu perfil.</p>
               </header>
-              <p class="account-block__status" id="licenses-status"></p>
+              <p class="account-section__status" id="licenses-status"></p>
               <ul id="licenses-list" class="library-list"></ul>
             </section>
-            <section class="account-block" id="account-payments" data-profile-section="payments">
-              <header class="account-block__header">
+            <section class="account-section" id="account-payments" data-profile-section="payments">
+              <header class="account-section__head">
                 <h3>Pagamentos recentes</h3>
                 <p>Transações registradas com Stripe e armazenadas no Supabase.</p>
               </header>
-              <p class="account-block__status" id="payments-status"></p>
-              <div class="table-wrapper table-wrapper--compact">
-                <table class="table table--compact" aria-live="polite">
-                  <thead>
-                    <tr>
-                      <th>Jogo</th>
-                      <th>Valor</th>
-                      <th>Status</th>
-                      <th>Data</th>
-                    </tr>
-                  </thead>
-                  <tbody id="payments-body"></tbody>
-                </table>
-              </div>
+              <p class="account-section__status" id="payments-status"></p>
+              <ul id="payments-list" class="payment-list" aria-live="polite"></ul>
             </section>
           </section>
           <div id="auth-forms" class="account-forms">

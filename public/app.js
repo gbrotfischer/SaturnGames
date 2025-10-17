@@ -55,7 +55,7 @@ const dom = {
   homeGamesCount: document.getElementById('home-games-count'),
   licensesList: document.getElementById('licenses-list'),
   licensesStatus: document.getElementById('licenses-status'),
-  paymentsBody: document.getElementById('payments-body'),
+  paymentsList: document.getElementById('payments-list'),
   paymentsStatus: document.getElementById('payments-status'),
   gameEyebrow: document.getElementById('game-eyebrow'),
   gameTitle: document.getElementById('game-title'),
@@ -346,7 +346,7 @@ async function updateAuthState() {
 
     if (dom.licensesList) dom.licensesList.innerHTML = '';
     if (dom.licensesStatus) dom.licensesStatus.textContent = '';
-    if (dom.paymentsBody) dom.paymentsBody.innerHTML = '';
+    if (dom.paymentsList) dom.paymentsList.innerHTML = '';
     if (dom.paymentsStatus) dom.paymentsStatus.textContent = '';
 
     if (dom.signupConfirmation?.hidden !== false) {
@@ -1138,7 +1138,7 @@ async function loadLicenses() {
 async function loadPayments() {
   if (!supabase || !currentSession?.user) return;
   if (dom.paymentsStatus) dom.paymentsStatus.textContent = 'Carregando histórico...';
-  if (dom.paymentsBody) dom.paymentsBody.innerHTML = '';
+  if (dom.paymentsList) dom.paymentsList.innerHTML = '';
 
   await ensureGamesIndex();
 
@@ -1160,32 +1160,49 @@ async function loadPayments() {
   }
 
   if (dom.paymentsStatus) dom.paymentsStatus.textContent = '';
-  if (!dom.paymentsBody) return;
+  if (!dom.paymentsList) return;
 
   const fragment = document.createDocumentFragment();
   data.forEach((payment) => {
-    const tr = document.createElement('tr');
+    const item = document.createElement('li');
+    item.className = 'payment-item';
 
-    const gameCell = document.createElement('td');
-    gameCell.textContent = gamesIndex.get(payment.game_id)?.name || 'Jogo desconhecido';
+    const main = document.createElement('div');
+    main.className = 'payment-item__main';
 
-    const amountCell = document.createElement('td');
-    amountCell.textContent = formatCurrency(payment.amount_cents, payment.currency);
+    const game = document.createElement('span');
+    game.className = 'payment-item__game';
+    game.textContent = gamesIndex.get(payment.game_id)?.name || 'Jogo desconhecido';
 
-    const statusCell = document.createElement('td');
-    statusCell.textContent = formatStatus(payment.payment_status);
+    const amount = document.createElement('span');
+    amount.className = 'payment-item__amount';
+    amount.textContent = formatCurrency(payment.amount_cents, payment.currency);
 
-    const dateCell = document.createElement('td');
-    dateCell.textContent = formatDate(payment.created_at);
+    main.appendChild(game);
+    main.appendChild(amount);
 
-    tr.appendChild(gameCell);
-    tr.appendChild(amountCell);
-    tr.appendChild(statusCell);
-    tr.appendChild(dateCell);
-    fragment.appendChild(tr);
+    const meta = document.createElement('div');
+    meta.className = 'payment-item__meta';
+
+    const status = document.createElement('span');
+    const normalizedStatus = (payment.payment_status || '').toLowerCase();
+    const isSuccess = normalizedStatus === 'succeeded' || normalizedStatus === 'paid';
+    status.className = isSuccess ? 'payment-item__status badge badge--success' : 'payment-item__status badge badge--muted';
+    status.textContent = formatStatus(payment.payment_status);
+
+    const date = document.createElement('span');
+    date.className = 'payment-item__date';
+    date.textContent = formatDate(payment.created_at);
+
+    meta.appendChild(status);
+    meta.appendChild(date);
+
+    item.appendChild(main);
+    item.appendChild(meta);
+    fragment.appendChild(item);
   });
 
-  dom.paymentsBody.appendChild(fragment);
+  dom.paymentsList.appendChild(fragment);
 }
 
 function updateAvatar(user) {
