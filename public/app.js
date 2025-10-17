@@ -243,22 +243,16 @@ function switchAuthTab(target = 'login') {
   Array.from(dom.authPanels || []).forEach((panel) => {
     const isMatch = panel.dataset.authPanel === normalized;
     panel.classList.toggle('is-active', isMatch);
-    if (isMatch) {
-      panel.removeAttribute('hidden');
-    } else {
-      panel.setAttribute('hidden', '');
-    }
+    setElementHidden(panel, !isMatch);
   });
 }
 
 function resetSignupPanel() {
   if (dom.signupStage) {
-    dom.signupStage.hidden = false;
-    dom.signupStage.removeAttribute('hidden');
+    setElementHidden(dom.signupStage, false);
   }
   if (dom.signupConfirmation) {
-    dom.signupConfirmation.hidden = true;
-    dom.signupConfirmation.setAttribute('hidden', '');
+    setElementHidden(dom.signupConfirmation, true);
   }
   if (dom.signupConfirmationEmail) {
     dom.signupConfirmationEmail.textContent = '';
@@ -270,12 +264,10 @@ function showSignupConfirmation(email) {
     dom.signupConfirmationEmail.textContent = email;
   }
   if (dom.signupStage) {
-    dom.signupStage.hidden = true;
-    dom.signupStage.setAttribute('hidden', '');
+    setElementHidden(dom.signupStage, true);
   }
   if (dom.signupConfirmation) {
-    dom.signupConfirmation.hidden = false;
-    dom.signupConfirmation.removeAttribute('hidden');
+    setElementHidden(dom.signupConfirmation, false);
   }
 }
 
@@ -294,18 +286,12 @@ async function updateAuthState() {
   const user = currentSession?.user;
   const isAuthenticated = Boolean(user);
 
-  if (dom.signout) {
-    dom.signout.hidden = !isAuthenticated;
-  }
+  setElementHidden(dom.signout, !isAuthenticated);
 
   updateAvatar(user);
 
-  if (dom.accountSummary) {
-    dom.accountSummary.hidden = !isAuthenticated;
-  }
-  if (dom.authForms) {
-    dom.authForms.hidden = isAuthenticated;
-  }
+  setElementHidden(dom.accountSummary, !isAuthenticated);
+  setElementHidden(dom.authForms, isAuthenticated);
 
   if (isAuthenticated) {
     const email = user.email || 'Conta Saturn';
@@ -314,15 +300,15 @@ async function updateAuthState() {
     if (dom.accountName) dom.accountName.textContent = `Olá, ${name}`;
     if (dom.accountMeta) dom.accountMeta.textContent = user.id;
 
-    if (dom.libraryAuthPrompt) dom.libraryAuthPrompt.hidden = true;
-    if (dom.paymentsAuthPrompt) dom.paymentsAuthPrompt.hidden = true;
+    setElementHidden(dom.libraryAuthPrompt, true);
+    setElementHidden(dom.paymentsAuthPrompt, true);
   } else {
     if (dom.accountEmail) dom.accountEmail.textContent = '';
     if (dom.accountName) dom.accountName.textContent = '';
     if (dom.accountMeta) dom.accountMeta.textContent = '';
 
-    if (dom.libraryAuthPrompt) dom.libraryAuthPrompt.hidden = false;
-    if (dom.paymentsAuthPrompt) dom.paymentsAuthPrompt.hidden = false;
+    setElementHidden(dom.libraryAuthPrompt, false);
+    setElementHidden(dom.paymentsAuthPrompt, false);
 
     if (dom.licensesList) dom.licensesList.innerHTML = '';
     if (dom.licensesStatus) dom.licensesStatus.textContent = '';
@@ -335,6 +321,17 @@ async function updateAuthState() {
   }
 
   await loadProtectedData();
+}
+
+function setElementHidden(element, shouldHide) {
+  if (!element) return;
+  if (shouldHide) {
+    element.hidden = true;
+    element.setAttribute('hidden', '');
+  } else {
+    element.hidden = false;
+    element.removeAttribute('hidden');
+  }
 }
 
 async function loadProtectedData() {
